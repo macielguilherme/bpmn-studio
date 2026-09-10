@@ -35,13 +35,22 @@ function applyZoom(targetZoom) {
     const canvas = getCanvas();
     if (!canvas) return;
 
-    const clamped = Math.max(state.minZoom, Math.min(state.maxZoom, targetZoom));
+    const clamped = Math.max(
+        state.minZoom,
+        Math.min(state.maxZoom, targetZoom)
+    );
+
     canvas.zoom(clamped);
-    state.currentZoom = clamped;
 }
 
 function zoomBy(delta) {
-    applyZoom(state.currentZoom + delta);
+    const canvas = getCanvas();
+    if (!canvas) return;
+
+    const viewbox = canvas.viewbox();
+    const currentZoom = viewbox?.scale ?? 1;
+
+    applyZoom(currentZoom + delta);
 }
 
 function zoomFit() {
