@@ -1,0 +1,248 @@
+/* ============================================================
+   BPMN Studio — variables.css
+   Design tokens globais. Único lugar do projeto com valores "crus".
+   Carregado APÓS reset.css e ANTES de layout/components/style.
+   ============================================================ */
+
+:root {
+    /* ------------------------------------------------------------
+       1. TIPOGRAFIA
+       ------------------------------------------------------------ */
+    --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+        Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-mono: "JetBrains Mono", "SF Mono", Menlo, Consolas,
+        "Liberation Mono", monospace;
+
+    /* Escala tipográfica (1.125 modular, arredondada) */
+    --text-xs: 0.6875rem;
+    /* 11px */
+    --text-sm: 0.8125rem;
+    /* 13px */
+    --text-base: 0.875rem;
+    /* 14px — base do app */
+    --text-md: 1rem;
+    /* 16px */
+    --text-lg: 1.125rem;
+    /* 18px */
+    --text-xl: 1.375rem;
+    /* 22px */
+    --text-2xl: 1.75rem;
+    /* 28px */
+
+    --line-tight: 1.2;
+    --line-base: 1.5;
+    --line-loose: 1.7;
+
+    --weight-regular: 400;
+    --weight-medium: 500;
+    --weight-semibold: 600;
+    --weight-bold: 700;
+
+    /* ------------------------------------------------------------
+       2. ESPAÇAMENTO (escala 4px)
+       ------------------------------------------------------------ */
+    --space-0: 0;
+    --space-1: 0.25rem;
+    /*  4px */
+    --space-2: 0.5rem;
+    /*  8px */
+    --space-3: 0.75rem;
+    /* 12px */
+    --space-4: 1rem;
+    /* 16px */
+    --space-5: 1.25rem;
+    /* 20px */
+    --space-6: 1.5rem;
+    /* 24px */
+    --space-8: 2rem;
+    /* 32px */
+    --space-10: 2.5rem;
+    /* 40px */
+    --space-12: 3rem;
+    /* 48px */
+
+    /* ------------------------------------------------------------
+       3. RAIOS
+       ------------------------------------------------------------ */
+    --radius-xs: 3px;
+    --radius-sm: 4px;
+    --radius-md: 6px;
+    --radius-lg: 10px;
+    --radius-xl: 16px;
+    --radius-full: 9999px;
+
+    /* ------------------------------------------------------------
+       4. SOMBRAS
+       ------------------------------------------------------------ */
+    --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.04);
+    --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06),
+        0 1px 2px rgba(15, 23, 42, 0.04);
+    --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08),
+        0 2px 4px rgba(15, 23, 42, 0.04);
+    --shadow-lg: 0 12px 24px rgba(15, 23, 42, 0.10),
+        0 4px 8px rgba(15, 23, 42, 0.05);
+
+    /* ------------------------------------------------------------
+       5. TRANSIÇÕES
+       ------------------------------------------------------------ */
+    --transition-fast: 120ms ease;
+    --transition-base: 180ms ease;
+    --transition-slow: 280ms ease;
+
+    /* ------------------------------------------------------------
+       6. Z-INDEX (escala nomeada, nunca use 9999)
+       ------------------------------------------------------------ */
+    --z-base: 1;
+    --z-canvas: 10;
+    --z-sidebar: 20;
+    --z-toolbar: 50;
+    --z-statusbar: 50;
+    --z-dropdown: 100;
+    --z-modal: 500;
+    --z-toast: 1000;
+
+    /* ------------------------------------------------------------
+       7. DIMENSÕES DE LAYOUT
+       ------------------------------------------------------------ */
+    --sidebar-width: 220px;
+    --sidebar-width-compact: 180px;
+    --properties-width: 260px;
+    --properties-width-compact: 220px;
+    --toolbar-height: 52px;
+    --statusbar-height: 34px;
+
+    /* ------------------------------------------------------------
+       8. CORES — BASE / SUPERFÍCIES
+       ------------------------------------------------------------ */
+    --color-bg: #f8fafc;
+    /* fundo geral (fora dos painéis) */
+    --color-surface: #ffffff;
+    /* painéis: toolbar, sidebar, props */
+    --color-surface-hover: #f1f5f9;
+    /* hover sutil em superfícies claras */
+    --color-surface-active: #e2e8f0;
+    /* estado pressionado/ativo */
+    --color-canvas-bg: #fbfcfd;
+    /* fundo da área de modelagem */
+    --color-canvas-dot: #cbd5e1;
+    /* pontinhos da grade */
+
+    /* ------------------------------------------------------------
+       9. CORES — TEXTO
+       ------------------------------------------------------------ */
+    --color-text: #0f172a;
+    /* texto principal */
+    --color-text-muted: #475569;
+    /* texto secundário */
+    --color-text-subtle: #94a3b8;
+    /* texto terciário, placeholders */
+    --color-text-inverse: #ffffff;
+    /* texto sobre cor forte */
+
+    /* ------------------------------------------------------------
+       10. CORES — BORDAS
+       ------------------------------------------------------------ */
+    --color-border: #e2e8f0;
+    /* borda padrão */
+    --color-border-strong: #cbd5e1;
+    /* borda em hover, divisores fortes */
+    --color-border-subtle: #f1f5f9;
+    /* divisores muito discretos */
+
+    /* ------------------------------------------------------------
+       11. COR PRIMÁRIA (azul-índigo sóbrio)
+       ------------------------------------------------------------ */
+    --color-primary: #3b5bdb;
+    --color-primary-hover: #3451c4;
+    --color-primary-active: #2e48ac;
+    --color-primary-soft: #e0e7ff;
+    /* fundo suave (chips, seleções) */
+
+    /* ------------------------------------------------------------
+       12. SEMÂNTICA — SUCESSO
+       ------------------------------------------------------------ */
+    --color-success: #16a34a;
+    --color-success-bg: #f0fdf4;
+    --color-success-text: #166534;
+    --color-success-border: #bbf7d0;
+
+    /* ------------------------------------------------------------
+       13. SEMÂNTICA — AVISO
+       ------------------------------------------------------------ */
+    --color-warning: #d97706;
+    --color-warning-bg: #fffbeb;
+    --color-warning-text: #92400e;
+    --color-warning-border: #fde68a;
+
+    /* ------------------------------------------------------------
+       14. SEMÂNTICA — PERIGO / ERRO
+       ------------------------------------------------------------ */
+    --color-danger: #dc2626;
+    --color-danger-hover: #b91c1c;
+    --color-danger-bg: #fef2f2;
+    --color-danger-text: #991b1b;
+    --color-danger-border: #fecaca;
+
+    /* ------------------------------------------------------------
+       15. SEMÂNTICA — INFORMAÇÃO
+       ------------------------------------------------------------ */
+    --color-info: #0284c7;
+    --color-info-bg: #f0f9ff;
+    --color-info-text: #075985;
+    --color-info-border: #bae6fd;
+
+    /* ------------------------------------------------------------
+       16. FOCO (acessibilidade)
+       ------------------------------------------------------------ */
+    --color-focus-ring: rgba(59, 91, 219, 0.35);
+
+    /* ------------------------------------------------------------
+       17. CANVAS — GRADE E MINIMAPA (para uso futuro)
+       ------------------------------------------------------------ */
+    --canvas-grid-size: 20px;
+    --canvas-grid-color: var(--color-canvas-dot);
+
+    /* ------------------------------------------------------------
+       18. BREAKPOINTS (referência, não consumível por var() em media queries)
+       ------------------------------------------------------------
+       CSS não permite var() em @media. Estes valores são a fonte da verdade
+       documental; se mudar aqui, atualize também os @media em layout.css.
+       ------------------------------------------------------------ */
+    /* --bp-md: 1100px; */
+    /* --bp-sm:  860px; */
+    /* --bp-xs:  600px; */
+}
+
+/* ============================================================
+   TEMA ESCURO (preparação para V2 — desativado por padrão)
+   ------------------------------------------------------------
+   Não ativamos ainda para não impactar a V1. Quando formos
+   implementar, o usuário poderá alternar via:
+   <html data-theme="dark"> ...
+   ou via prefers-color-scheme. Deixamos o esqueleto pronto
+   para facilitar o trabalho futuro.
+   ============================================================ */
+/*
+:root[data-theme="dark"] {
+    --color-bg:            #0f172a;
+    --color-surface:       #1e293b;
+    --color-surface-hover: #334155;
+    --color-surface-active:#475569;
+    --color-canvas-bg:     #0f172a;
+    --color-canvas-dot:    #334155;
+
+    --color-text:          #f1f5f9;
+    --color-text-muted:    #cbd5e1;
+    --color-text-subtle:   #94a3b8;
+    --color-text-inverse:  #0f172a;
+
+    --color-border:        #334155;
+    --color-border-strong: #475569;
+    --color-border-subtle: #1e293b;
+
+    --color-primary:        #6366f1;
+    --color-primary-hover:  #818cf8;
+    --color-primary-active: #4f46e5;
+    --color-primary-soft:   #312e81;
+}
+*/

@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 32 32"
+     width="32"
+     height="32"
+     role="img"
+     aria-label="BPMN Studio">
+
+  <!--
+    BPMN Studio — favicon
+    Conceito: nó BPMN (losango) + evento (círculo) + fluxo (seta)
+    Paleta: azul-índigo (#3b5bdb) sobre fundo transparente
+  -->
+
+  <!-- Start event (círculo) -->
+  <circle cx="8" cy="16" r="3.5"
+          fill="none"
+          stroke="#3b5bdb"
+          stroke-width="2"/>
+
+  <!-- Sequence flow (linha horizontal) -->
+  <line x1="11.5" y1="16" x2="20" y2="16"
+        stroke="#3b5bdb"
+        stroke-width="2"
+        stroke-linecap="round"/>
+
+  <!-- Gateway exclusivo (losango) -->
+  <polygon points="24,12 28,16 24,20 20,16"
+           fill="none"
+           stroke="#3b5bdb"
+           stroke-width="2"
+           stroke-linejoin="round"/>
+</svg>

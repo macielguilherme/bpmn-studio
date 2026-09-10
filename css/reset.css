@@ -1,0 +1,180 @@
+/* ============================================================
+   BPMN Studio — reset.css
+   Normalização moderna de estilos padrão do navegador.
+   Carregado ANTES de variables/layout/components/style.
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   1. BOX MODEL GLOBAL
+   Todos os elementos usam border-box por padrão.
+   ------------------------------------------------------------ */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+/* ------------------------------------------------------------
+   2. HTML E BODY
+   ------------------------------------------------------------ */
+html {
+    -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    tab-size: 4;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    line-height: 1.5;
+}
+
+/* ------------------------------------------------------------
+   3. TIPOGRAFIA
+   ------------------------------------------------------------ */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin: 0;
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: 1.25;
+}
+
+p {
+    margin: 0;
+}
+
+/* ------------------------------------------------------------
+   4. LISTAS
+   Remove marcadores e recuo apenas em listas com role semântica
+   de UI (nav, menus). Listas de conteúdo mantêm seus marcadores.
+   ------------------------------------------------------------ */
+ul[role="list"],
+ol[role="list"],
+nav ul,
+nav ol {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* ------------------------------------------------------------
+   5. LINKS
+   ------------------------------------------------------------ */
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* ------------------------------------------------------------
+   6. MÍDIA
+   Imagens e mídia não estouram seus containers.
+   ------------------------------------------------------------ */
+img,
+picture,
+video,
+canvas,
+svg {
+    display: block;
+    max-width: 100%;
+}
+
+img,
+picture,
+video {
+    height: auto;
+}
+
+/* ------------------------------------------------------------
+   7. FORMULÁRIOS
+   Inputs, botões e selects herdam tipografia do app.
+   ------------------------------------------------------------ */
+input,
+button,
+textarea,
+select {
+    font: inherit;
+    color: inherit;
+    margin: 0;
+}
+
+button {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    text-align: inherit;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+button:disabled {
+    cursor: not-allowed;
+}
+
+textarea {
+    resize: vertical;
+}
+
+fieldset {
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+
+legend {
+    padding: 0;
+}
+
+/* ------------------------------------------------------------
+   8. TABELAS
+   ------------------------------------------------------------ */
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+/* ------------------------------------------------------------
+   9. ELEMENTOS INTERATIVOS
+   ------------------------------------------------------------ */
+summary {
+    cursor: pointer;
+}
+
+/* ------------------------------------------------------------
+   10. ACESSIBILIDADE — PREFERÊNCIAS DO USUÁRIO
+   ------------------------------------------------------------ */
+
+/* Usuário pediu movimento reduzido: desliga animações e transições */
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* ------------------------------------------------------------
+   11. UTILITÁRIO — ESCONDE VISUALMENTE MAS MANTÉM PARA LEITOR DE TELA
+   (complementa .sr-only em components.css; aqui é o fallback global)
+   ------------------------------------------------------------ */
+[hidden] {
+    display: none !important;
+}

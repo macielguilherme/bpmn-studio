@@ -1,0 +1,347 @@
+/* ============================================================
+   BPMN Studio — style.css
+   Refinamentos, overrides do bpmn-js e detalhes de polish.
+   Carregado APÓS reset/variables/layout/components.
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   1. BASE DO APP
+   ------------------------------------------------------------ */
+.app {
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+/* Melhora a seleção de texto (mais sutil que o azul padrão) */
+::selection {
+    background-color: var(--color-primary-soft);
+    color: var(--color-text);
+}
+
+/* Scrollbars discretas e consistentes entre navegadores */
+.sidebar,
+.properties,
+.validation__list,
+.canvas-wrap {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border-strong) transparent;
+}
+
+.sidebar::-webkit-scrollbar,
+.properties::-webkit-scrollbar,
+.validation__list::-webkit-scrollbar,
+.canvas-wrap::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.sidebar::-webkit-scrollbar-track,
+.properties::-webkit-scrollbar-track,
+.validation__list::-webkit-scrollbar-track,
+.canvas-wrap::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.sidebar::-webkit-scrollbar-thumb,
+.properties::-webkit-scrollbar-thumb,
+.validation__list::-webkit-scrollbar-thumb,
+.canvas-wrap::-webkit-scrollbar-thumb {
+    background-color: var(--color-border-strong);
+    border-radius: 4px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover,
+.properties::-webkit-scrollbar-thumb:hover,
+.validation__list::-webkit-scrollbar-thumb:hover,
+.canvas-wrap::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-text-subtle);
+}
+
+/* ------------------------------------------------------------
+   2. TOOLBAR — detalhes finos
+   ------------------------------------------------------------ */
+.toolbar__brand {
+    user-select: none;
+}
+
+.toolbar__logo {
+    font-weight: 700;
+    line-height: 1;
+    box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.12);
+}
+
+/* ------------------------------------------------------------
+   3. SIDEBAR — grupos e estados
+   ------------------------------------------------------------ */
+.sidebar__group+.sidebar__group {
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--color-border-subtle, var(--color-border));
+}
+
+/* Feedback visual sutil ao arrastar um elemento para o canvas */
+.element-btn.is-dragging {
+    opacity: 0.5;
+    cursor: grabbing;
+}
+
+/* ------------------------------------------------------------
+   4. ÁREA DE MODELAGEM — refinamentos do canvas
+   ------------------------------------------------------------ */
+.canvas-wrap {
+    box-shadow: inset 0 0 0 1px var(--color-border-subtle, transparent);
+}
+
+/* Drop indicator: aparece quando o usuário arrasta um
+   elemento da sidebar sobre o canvas (feedback de destino válido) */
+.canvas-wrap.is-drop-target {
+    outline: 2px dashed var(--color-primary);
+    outline-offset: -8px;
+}
+
+/* ------------------------------------------------------------
+   5. PAINEL DE PROPRIEDADES — estados
+   ------------------------------------------------------------ */
+.properties__body .input-label:not(:first-child) {
+    margin-top: var(--space-2);
+}
+
+.properties__body .btn {
+    align-self: flex-start;
+}
+
+/* ------------------------------------------------------------
+   6. PAINEL DE VALIDAÇÃO — itens
+   ------------------------------------------------------------ */
+.validation__list li::before {
+    content: "•";
+    flex-shrink: 0;
+    color: var(--color-text-subtle);
+    font-weight: 700;
+    line-height: 1.6;
+}
+
+.validation__list li[data-level="success"]::before {
+    content: "✓";
+    color: var(--color-success);
+}
+
+.validation__list li[data-level="warning"]::before {
+    content: "⚠";
+    color: var(--color-warning);
+}
+
+.validation__list li[data-level="error"]::before {
+    content: "✕";
+    color: var(--color-danger);
+}
+
+/* ------------------------------------------------------------
+   7. STATUS BAR — estados
+   ------------------------------------------------------------ */
+.statusbar__badge {
+    transition: background-color var(--transition-fast),
+        color var(--transition-fast),
+        border-color var(--transition-fast);
+}
+
+/* Estado neutro (padrão) */
+.statusbar__badge[data-state="ok"] {
+    color: var(--color-success-text);
+    background-color: var(--color-success-bg);
+    border-color: var(--color-success-border);
+}
+
+.statusbar__badge[data-state="warning"] {
+    color: var(--color-warning-text);
+    background-color: var(--color-warning-bg);
+    border-color: var(--color-warning-border);
+}
+
+.statusbar__badge[data-state="error"] {
+    color: var(--color-danger-text);
+    background-color: var(--color-danger-bg);
+    border-color: var(--color-danger-border);
+}
+
+/* ------------------------------------------------------------
+   8. OVERRIDES DO bpmn-js
+   Ajustes visuais para casar o canvas da lib com a identidade.
+   ------------------------------------------------------------ */
+
+/* Container principal */
+.djs-container {
+    font-family: var(--font-sans);
+}
+
+/* Paleta padrão da lib (canto superior esquerdo do canvas) */
+.djs-palette {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    padding: var(--space-1);
+}
+
+.djs-palette .entry {
+    border-radius: var(--radius-sm);
+    transition: background-color var(--transition-fast);
+}
+
+.djs-palette .entry:hover {
+    background-color: var(--color-surface-hover);
+}
+
+/* Context pad (ícones que aparecem ao selecionar um elemento) */
+.djs-context-pad .entry {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-sm);
+    transition: background-color var(--transition-fast);
+}
+
+.djs-context-pad .entry:hover {
+    background-color: var(--color-surface-hover);
+}
+
+/* Popup de edição inline (renomear elementos) */
+.djs-popup,
+.djs-popup .djs-popup-body {
+    font-family: var(--font-sans);
+}
+
+.djs-popup .entry {
+    border-radius: var(--radius-sm);
+}
+
+.djs-popup .entry:hover {
+    background-color: var(--color-surface-hover);
+}
+
+/* Elementos selecionados no canvas */
+.djs-element.selected .djs-outline {
+    stroke: var(--color-primary);
+    stroke-width: 2px;
+    stroke-dasharray: none;
+}
+
+/* Hover em elementos */
+.djs-element.hover .djs-outline {
+    stroke: var(--color-primary);
+    stroke-width: 1.5px;
+}
+
+/* Cursor de "mover" sobre elementos arrastáveis */
+.djs-element .djs-hit {
+    cursor: default;
+}
+
+.djs-element[draggable="true"] .djs-hit,
+.djs-dragger .djs-hit {
+    cursor: move;
+}
+
+/* ------------------------------------------------------------
+   9. ESTADOS GLOBAIS
+   ------------------------------------------------------------ */
+/* Corpo com classe utilitária usada pelo JS para travar interações
+   durante operações (ex.: enquanto importa/exporta) */
+body.is-busy {
+    cursor: progress;
+}
+
+body.is-busy * {
+    pointer-events: none;
+}
+
+body.is-busy .toast,
+body.is-busy .toast * {
+    pointer-events: auto;
+}
+
+/* Foco visível consistente em toda a app */
+:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--color-focus-ring);
+}
+
+/* ------------------------------------------------------------
+   10. IMPRESSÃO (fallback mínimo)
+   ------------------------------------------------------------ */
+@media print {
+
+    .toolbar,
+    .sidebar,
+    .properties,
+    .statusbar,
+    .validation,
+    .notifications {
+        display: none !important;
+    }
+
+    .app {
+        display: block;
+        height: auto;
+    }
+
+    .canvas-wrap {
+        height: 100vh;
+        background: white;
+    }
+}
+
+/* ============================================================
+   PAINEL DE PROPRIEDADES — campos e header
+   (adicionado após correções)
+   ============================================================ */
+
+.properties__header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+
+    padding: var(--space-2) var(--space-3);
+
+    background-color: var(--color-surface-hover);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+}
+
+.properties__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 22px;
+    height: 22px;
+
+    font-size: var(--text-sm);
+    color: var(--color-primary);
+    background-color: var(--color-primary-soft);
+    border-radius: var(--radius-sm);
+    flex-shrink: 0;
+}
+
+.properties__type {
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--color-text);
+}
+
+.properties__field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+
+.input--readonly {
+    color: var(--color-text-muted);
+    background-color: var(--color-surface-hover);
+    cursor: default;
+}
+
+.input--readonly:focus {
+    border-color: var(--color-border);
+    box-shadow: none;
+}
