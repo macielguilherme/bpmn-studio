@@ -1,347 +1,367 @@
 /* ============================================================
    BPMN Studio — style.css
-   Refinamentos, overrides do bpmn-js e detalhes de polish.
-   Carregado APÓS reset/variables/layout/components.
+   Utilitários globais. Última camada de CSS.
+   Carregado APÓS todos os outros CSS.
    ============================================================ */
 
 /* ------------------------------------------------------------
-   1. BASE DO APP
+   1. BASE
    ------------------------------------------------------------ */
-.app {
-    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+:root {
+    color-scheme: light;
 }
 
-/* Melhora a seleção de texto (mais sutil que o azul padrão) */
+html,
+body {
+    width: 100%;
+    height: 100%;
+    max-height: 100vh;
+    overflow: hidden;
+    /* ← nunca scrollar a página */
+}
+
+#app {
+    width: 100%;
+    height: 100vh;
+    max-height: 100vh;
+    overflow: hidden;
+}
+
+body {
+    margin: 0;
+
+    font-family: var(--font-sans);
+    font-size: var(--font-size-base);
+    line-height: 1.5;
+
+    color: var(--color-text-primary);
+    background-color: var(--color-app-background);
+
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}
+
+/* ------------------------------------------------------------
+   2. ACESSIBILIDADE
+   ------------------------------------------------------------ */
+:focus-visible {
+    outline: 2px solid var(--color-primary-600);
+    outline-offset: 2px;
+}
+
 ::selection {
-    background-color: var(--color-primary-soft);
-    color: var(--color-text);
+    color: var(--color-white);
+    background-color: var(--color-primary-600);
 }
 
-/* Scrollbars discretas e consistentes entre navegadores */
-.sidebar,
-.properties,
-.validation__list,
-.canvas-wrap {
+/* ------------------------------------------------------------
+   3. SCROLLBARS GLOBAIS
+   ------------------------------------------------------------ */
+* {
     scrollbar-width: thin;
-    scrollbar-color: var(--color-border-strong) transparent;
+    scrollbar-color: var(--scrollbar-thumb) transparent;
 }
 
-.sidebar::-webkit-scrollbar,
-.properties::-webkit-scrollbar,
-.validation__list::-webkit-scrollbar,
-.canvas-wrap::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+*::-webkit-scrollbar {
+    width: var(--scrollbar-size, 7px);
+    height: var(--scrollbar-size, 7px);
 }
 
-.sidebar::-webkit-scrollbar-track,
-.properties::-webkit-scrollbar-track,
-.validation__list::-webkit-scrollbar-track,
-.canvas-wrap::-webkit-scrollbar-track {
+*::-webkit-scrollbar-track {
     background: transparent;
 }
 
-.sidebar::-webkit-scrollbar-thumb,
-.properties::-webkit-scrollbar-thumb,
-.validation__list::-webkit-scrollbar-thumb,
-.canvas-wrap::-webkit-scrollbar-thumb {
-    background-color: var(--color-border-strong);
-    border-radius: 4px;
-    border: 2px solid transparent;
-    background-clip: content-box;
+*::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-thumb, #cbd5e1);
+    border-radius: var(--radius-full);
 }
 
-.sidebar::-webkit-scrollbar-thumb:hover,
-.properties::-webkit-scrollbar-thumb:hover,
-.validation__list::-webkit-scrollbar-thumb:hover,
-.canvas-wrap::-webkit-scrollbar-thumb:hover {
-    background-color: var(--color-text-subtle);
+*::-webkit-scrollbar-thumb:hover {
+    background-color: var(--scrollbar-thumb-hover, #94a3b8);
 }
 
 /* ------------------------------------------------------------
-   2. TOOLBAR — detalhes finos
+   4. UTILITÁRIOS DE VISIBILIDADE
    ------------------------------------------------------------ */
-.toolbar__brand {
-    user-select: none;
+.hidden,
+.is-hidden {
+    display: none !important;
 }
 
-.toolbar__logo {
-    font-weight: 700;
-    line-height: 1;
-    box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.12);
+.is-visible {
+    display: block !important;
+}
+
+.invisible {
+    visibility: hidden !important;
+}
+
+.sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
 }
 
 /* ------------------------------------------------------------
-   3. SIDEBAR — grupos e estados
+   5. UTILITÁRIOS DE ESTADO
    ------------------------------------------------------------ */
-.sidebar__group+.sidebar__group {
-    padding-top: var(--space-3);
-    border-top: 1px solid var(--color-border-subtle, var(--color-border));
+.is-disabled {
+    pointer-events: none !important;
+    opacity: var(--opacity-disabled) !important;
 }
 
-/* Feedback visual sutil ao arrastar um elemento para o canvas */
-.element-btn.is-dragging {
-    opacity: 0.5;
-    cursor: grabbing;
+.is-loading {
+    cursor: progress !important;
+}
+
+.is-active {
+    position: relative;
 }
 
 /* ------------------------------------------------------------
-   4. ÁREA DE MODELAGEM — refinamentos do canvas
+   6. TEXTO
    ------------------------------------------------------------ */
-.canvas-wrap {
-    box-shadow: inset 0 0 0 1px var(--color-border-subtle, transparent);
+.text-muted {
+    color: var(--color-text-muted) !important;
 }
 
-/* Drop indicator: aparece quando o usuário arrasta um
-   elemento da sidebar sobre o canvas (feedback de destino válido) */
-.canvas-wrap.is-drop-target {
-    outline: 2px dashed var(--color-primary);
-    outline-offset: -8px;
+.text-secondary {
+    color: var(--color-text-secondary) !important;
+}
+
+.text-primary {
+    color: var(--color-primary-600) !important;
+}
+
+.text-danger {
+    color: var(--color-danger-600) !important;
+}
+
+.text-warning {
+    color: var(--color-warning-600) !important;
+}
+
+.text-success {
+    color: var(--color-success-600) !important;
+}
+
+.text-center {
+    text-align: center !important;
+}
+
+.text-nowrap {
+    white-space: nowrap !important;
+}
+
+.text-truncate {
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
 }
 
 /* ------------------------------------------------------------
-   5. PAINEL DE PROPRIEDADES — estados
+   7. LAYOUT UTILITÁRIOS
    ------------------------------------------------------------ */
-.properties__body .input-label:not(:first-child) {
-    margin-top: var(--space-2);
+.flex {
+    display: flex !important;
 }
 
-.properties__body .btn {
-    align-self: flex-start;
+.flex-column {
+    flex-direction: column !important;
+}
+
+.flex-center {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.items-center {
+    align-items: center !important;
+}
+
+.justify-between {
+    justify-content: space-between !important;
+}
+
+.gap-1 {
+    gap: var(--space-1) !important;
+}
+
+.gap-2 {
+    gap: var(--space-2) !important;
+}
+
+.gap-3 {
+    gap: var(--space-3) !important;
 }
 
 /* ------------------------------------------------------------
-   6. PAINEL DE VALIDAÇÃO — itens
+   8. OVERFLOW
    ------------------------------------------------------------ */
-.validation__list li::before {
-    content: "•";
-    flex-shrink: 0;
-    color: var(--color-text-subtle);
-    font-weight: 700;
-    line-height: 1.6;
+.overflow-hidden {
+    overflow: hidden !important;
 }
 
-.validation__list li[data-level="success"]::before {
-    content: "✓";
-    color: var(--color-success);
-}
-
-.validation__list li[data-level="warning"]::before {
-    content: "⚠";
-    color: var(--color-warning);
-}
-
-.validation__list li[data-level="error"]::before {
-    content: "✕";
-    color: var(--color-danger);
+.overflow-auto {
+    overflow: auto !important;
 }
 
 /* ------------------------------------------------------------
-   7. STATUS BAR — estados
+   9. CURSORES
    ------------------------------------------------------------ */
-.statusbar__badge {
-    transition: background-color var(--transition-fast),
-        color var(--transition-fast),
-        border-color var(--transition-fast);
+.cursor-pointer {
+    cursor: pointer !important;
 }
 
-/* Estado neutro (padrão) */
-.statusbar__badge[data-state="ok"] {
-    color: var(--color-success-text);
-    background-color: var(--color-success-bg);
-    border-color: var(--color-success-border);
+.cursor-default {
+    cursor: default !important;
 }
 
-.statusbar__badge[data-state="warning"] {
-    color: var(--color-warning-text);
-    background-color: var(--color-warning-bg);
-    border-color: var(--color-warning-border);
+.cursor-not-allowed {
+    cursor: not-allowed !important;
 }
 
-.statusbar__badge[data-state="error"] {
-    color: var(--color-danger-text);
-    background-color: var(--color-danger-bg);
-    border-color: var(--color-danger-border);
+.cursor-grab {
+    cursor: grab !important;
+}
+
+.cursor-grabbing {
+    cursor: grabbing !important;
 }
 
 /* ------------------------------------------------------------
-   8. OVERRIDES DO bpmn-js
-   Ajustes visuais para casar o canvas da lib com a identidade.
+   10. DIVISORES
    ------------------------------------------------------------ */
+.divider {
+    width: 100%;
+    height: 1px;
 
-/* Container principal */
-.djs-container {
-    font-family: var(--font-sans);
-}
+    margin: var(--space-3) 0;
 
-/* Paleta padrão da lib (canto superior esquerdo do canvas) */
-.djs-palette {
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    box-shadow: var(--shadow-sm);
-    padding: var(--space-1);
-}
-
-.djs-palette .entry {
-    border-radius: var(--radius-sm);
-    transition: background-color var(--transition-fast);
-}
-
-.djs-palette .entry:hover {
-    background-color: var(--color-surface-hover);
-}
-
-/* Context pad (ícones que aparecem ao selecionar um elemento) */
-.djs-context-pad .entry {
-    background-color: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-sm);
-    box-shadow: var(--shadow-sm);
-    transition: background-color var(--transition-fast);
-}
-
-.djs-context-pad .entry:hover {
-    background-color: var(--color-surface-hover);
-}
-
-/* Popup de edição inline (renomear elementos) */
-.djs-popup,
-.djs-popup .djs-popup-body {
-    font-family: var(--font-sans);
-}
-
-.djs-popup .entry {
-    border-radius: var(--radius-sm);
-}
-
-.djs-popup .entry:hover {
-    background-color: var(--color-surface-hover);
-}
-
-/* Elementos selecionados no canvas */
-.djs-element.selected .djs-outline {
-    stroke: var(--color-primary);
-    stroke-width: 2px;
-    stroke-dasharray: none;
-}
-
-/* Hover em elementos */
-.djs-element.hover .djs-outline {
-    stroke: var(--color-primary);
-    stroke-width: 1.5px;
-}
-
-/* Cursor de "mover" sobre elementos arrastáveis */
-.djs-element .djs-hit {
-    cursor: default;
-}
-
-.djs-element[draggable="true"] .djs-hit,
-.djs-dragger .djs-hit {
-    cursor: move;
+    background-color: var(--color-border);
+    border: 0;
 }
 
 /* ------------------------------------------------------------
-   9. ESTADOS GLOBAIS
+   11. SPINNER DE CARREGAMENTO
    ------------------------------------------------------------ */
-/* Corpo com classe utilitária usada pelo JS para travar interações
-   durante operações (ex.: enquanto importa/exporta) */
-body.is-busy {
-    cursor: progress;
-}
-
-body.is-busy * {
+.loading {
+    position: relative;
     pointer-events: none;
 }
 
-body.is-busy .toast,
-body.is-busy .toast * {
-    pointer-events: auto;
+.loading::after {
+    content: "";
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+
+    width: 18px;
+    height: 18px;
+
+    margin: -9px 0 0 -9px;
+
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+
+    animation: bpmn-spin 0.7s linear infinite;
 }
 
-/* Foco visível consistente em toda a app */
-:focus-visible {
-    outline: none;
-    box-shadow: 0 0 0 3px var(--color-focus-ring);
+@keyframes bpmn-spin {
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 /* ------------------------------------------------------------
-   10. IMPRESSÃO (fallback mínimo)
+   12. ESTADOS DO DOCUMENTO
+   ------------------------------------------------------------ */
+[data-document-state="saved"] {
+    color: var(--color-success-600);
+}
+
+[data-document-state="dirty"] {
+    color: var(--color-warning-600);
+}
+
+[data-document-state="error"] {
+    color: var(--color-danger-600);
+}
+
+/* ------------------------------------------------------------
+   13. OVERLAY DE MODAL (genérico — para uso futuro)
+   ------------------------------------------------------------ */
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-modal);
+
+    background-color: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(2px);
+}
+
+/* ------------------------------------------------------------
+   14. IMPRESSÃO
    ------------------------------------------------------------ */
 @media print {
+
+    html,
+    body {
+        width: auto;
+        height: auto;
+        overflow: visible;
+    }
 
     .toolbar,
     .sidebar,
     .properties,
-    .statusbar,
     .validation,
+    .statusbar,
+    .canvas-controls,
+    .bpmn-badge,
     .notifications {
         display: none !important;
     }
 
-    .app {
-        display: block;
-        height: auto;
+    .canvas {
+        position: static !important;
+
+        width: 100% !important;
+        height: auto !important;
+        min-height: 100vh !important;
+
+        background-image: none;
+        background-color: var(--color-white);
     }
+}
 
-    .canvas-wrap {
-        height: 100vh;
-        background: white;
+/* ------------------------------------------------------------
+   15. REDUÇÃO DE MOVIMENTO
+   ------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
     }
-}
-
-/* ============================================================
-   PAINEL DE PROPRIEDADES — campos e header
-   (adicionado após correções)
-   ============================================================ */
-
-.properties__header {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-
-    padding: var(--space-2) var(--space-3);
-
-    background-color: var(--color-surface-hover);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-}
-
-.properties__icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    width: 22px;
-    height: 22px;
-
-    font-size: var(--text-sm);
-    color: var(--color-primary);
-    background-color: var(--color-primary-soft);
-    border-radius: var(--radius-sm);
-    flex-shrink: 0;
-}
-
-.properties__type {
-    font-size: var(--text-sm);
-    font-weight: 500;
-    color: var(--color-text);
-}
-
-.properties__field {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-1);
-}
-
-.input--readonly {
-    color: var(--color-text-muted);
-    background-color: var(--color-surface-hover);
-    cursor: default;
-}
-
-.input--readonly:focus {
-    border-color: var(--color-border);
-    box-shadow: none;
 }

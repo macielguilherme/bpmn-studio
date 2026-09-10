@@ -1,190 +1,182 @@
 /* ============================================================
    BPMN Studio — layout.css
-   Estrutura macro da aplicação (grid, posicionamento, dimensões)
-   Depende de: variables.css
+   Estrutura macro: grid do app, posicionamento dos painéis.
+   Carrega APÓS reset e variables.
    ============================================================ */
 
 /* ------------------------------------------------------------
-   APP SHELL
-   Grid vertical: toolbar / workspace / validation / statusbar
+   DOCUMENTO
    ------------------------------------------------------------ */
-.app {
-    display: grid;
-    grid-template-rows: auto 1fr auto auto;
-    grid-template-areas:
-        "toolbar"
-        "workspace"
-        "validation"
-        "statusbar";
-
-    width: 100vw;
-    height: 100vh;
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
     overflow: hidden;
-
-    background-color: var(--color-bg);
-    color: var(--color-text);
-    font-family: var(--font-sans);
-    font-size: var(--text-sm);
 }
 
 /* ------------------------------------------------------------
-   TOOLBAR SUPERIOR
+   APP SHELL
+   Grid vertical: toolbar / workspace / statusbar
    ------------------------------------------------------------ */
-.toolbar {
-    grid-area: toolbar;
+.app {
+    display: grid;
+    grid-template-rows: var(--toolbar-height) minmax(0, 1fr) var(--statusbar-height);
+    grid-template-columns: minmax(0, 1fr);
 
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-4);
+    width: 100%;
+    height: 100vh;
+    /* ← garante altura da viewport */
+    max-height: 100vh;
+    /* ← não ultrapassa */
+    min-height: 0;
 
-    padding: var(--space-2) var(--space-4);
-    min-height: 52px;
+    overflow: hidden;
 
-    background-color: var(--color-surface);
-    border-bottom: 1px solid var(--color-border);
-    z-index: var(--z-toolbar);
-}
-
-.toolbar__brand {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-
-    font-weight: 600;
-    font-size: var(--text-base);
-    color: var(--color-text);
-    white-space: nowrap;
-}
-
-.toolbar__logo {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    width: 26px;
-    height: 26px;
-
-    font-size: var(--text-base);
-    color: var(--color-text-inverse);
-
-    background-color: var(--color-primary);
-    border-radius: var(--radius-sm);
-}
-
-.toolbar__title {
-    letter-spacing: -0.01em;
-}
-
-.toolbar__actions {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    flex-wrap: wrap;
+    background-color: var(--color-app-background);
+    color: var(--color-text-primary);
+    font-family: var(--font-sans);
+    font-size: var(--font-size-base);
+    line-height: 1.5;
 }
 
 /* ------------------------------------------------------------
    WORKSPACE
-   Grid horizontal: sidebar / canvas / properties
+   2 colunas: sidebar / (canvas + properties)
    ------------------------------------------------------------ */
 .workspace {
-    grid-area: workspace;
+    position: relative;
 
     display: grid;
-    grid-template-columns: var(--sidebar-width) 1fr var(--properties-width);
+    grid-template-columns: var(--sidebar-width) minmax(0, 1fr) var(--properties-width);
+    grid-template-rows: minmax(0, 1fr);
     grid-template-areas: "sidebar canvas properties";
 
     min-height: 0;
-    /* permite scroll interno correto */
+    min-width: 0;
+    height: 100%;
+    /* ← ocupa toda a linha do grid */
+    max-height: 100%;
+    /* ← não ultrapassa */
+
     overflow: hidden;
 }
 
 /* ------------------------------------------------------------
-   SIDEBAR (elementos BPMN)
+   SIDEBAR
    ------------------------------------------------------------ */
 .sidebar {
     grid-area: sidebar;
 
     display: flex;
     flex-direction: column;
-    gap: var(--space-4);
 
-    padding: var(--space-3);
+    min-width: 0;
+    min-height: 0;
+    height: 100%;
+    /* ← ocupa toda a altura disponível */
 
-    background-color: var(--color-surface);
-    border-right: 1px solid var(--color-border);
+    background-color: var(--sidebar-background);
+    border-right: 1px solid var(--sidebar-border);
 
-    overflow-y: auto;
-    overflow-x: hidden;
+    overflow: hidden;
+    /* ← container não scrolla */
+    z-index: var(--z-sidebar);
 }
 
-.sidebar__group {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-1);
+.sidebar__header {
+    flex: 0 0 auto;
+    padding: var(--space-3) var(--space-3) var(--space-2);
+
+    border-bottom: 1px solid var(--color-border-light);
 }
 
 .sidebar__title {
-    padding: 0 var(--space-2);
-    margin-bottom: var(--space-1);
-
-    font-size: var(--text-xs);
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--color-text-subtle);
+    margin: 0;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    letter-spacing: 0.01em;
 }
 
-.sidebar__list {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
+.sidebar__subtitle {
+    margin: 2px 0 0;
+    font-size: var(--font-size-xs);
+    color: var(--color-text-tertiary);
+}
 
-    list-style: none;
-    padding: 0;
-    margin: 0;
+.sidebar__content {
+    flex: 1 1 auto;
+    min-height: 0;
+    /* ← PERMITE o flex child scrollar */
+
+    overflow-y: auto;
+    /* ← scroll APENAS aqui */
+    overflow-x: hidden;
+
+    padding: var(--space-2);
+
+    /* scrollbar estilizada */
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) transparent;
+}
+
+.sidebar__content::-webkit-scrollbar {
+    width: var(--scrollbar-size);
+}
+
+.sidebar__content::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-thumb);
+    border-radius: var(--radius-full);
+}
+
+.sidebar__footer {
+    flex: 0 0 auto;
+
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+
+    padding: var(--space-2) var(--space-3);
+
+    border-top: 1px solid var(--color-border-light);
+    background-color: var(--color-surface-subtle);
+
+    font-size: var(--font-size-xs);
+    color: var(--color-text-tertiary);
+}
+
+.sidebar__hint {
+    white-space: nowrap;
 }
 
 /* ------------------------------------------------------------
-   CANVAS (área de modelagem)
+   CANVAS AREA
    ------------------------------------------------------------ */
-.canvas-wrap {
+.canvas-area {
     grid-area: canvas;
 
-    position: relative;
     min-width: 0;
     min-height: 0;
+    height: 100%;
 
-    background-color: var(--color-canvas-bg);
-
-    /* textura sutil de grade (pontos) */
-    background-image:
-        radial-gradient(circle,
-            var(--color-canvas-dot) 1px,
-            transparent 1px);
-    background-size: 20px 20px;
-    background-position: 0 0;
-
+    position: relative;
     overflow: hidden;
 }
 
-.canvas {
-    position: absolute;
-    inset: 0;
+.canvas-wrap {
     width: 100%;
     height: 100%;
-}
 
-/* bpmn-js injeta um <svg> aqui — garantimos que ele ocupe tudo */
-.canvas .bjs-container,
-.canvas .djs-container {
-    width: 100%;
-    height: 100%;
-    background: transparent;
+    position: relative;
+    overflow: hidden;
+
+    background-color: var(--color-canvas);
 }
 
 /* ------------------------------------------------------------
-   PAINEL DE PROPRIEDADES
+   PROPERTIES
    ------------------------------------------------------------ */
 .properties {
     grid-area: properties;
@@ -192,115 +184,58 @@
     display: flex;
     flex-direction: column;
 
-    background-color: var(--color-surface);
-    border-left: 1px solid var(--color-border);
+    min-width: 0;
+    min-height: 0;
+    height: 100%;
 
-    overflow-y: auto;
-    overflow-x: hidden;
-}
+    background-color: var(--properties-background);
+    border-left: 1px solid var(--properties-border);
 
-.properties__title {
-    padding: var(--space-3) var(--space-4);
-
-    font-size: var(--text-xs);
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--color-text-subtle);
-
-    border-bottom: 1px solid var(--color-border);
-}
-
-.properties__body {
-    flex: 1;
-    padding: var(--space-3) var(--space-4);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
-}
-
-.properties__empty {
-    color: var(--color-text-subtle);
-    font-size: var(--text-sm);
-    line-height: 1.5;
+    overflow: hidden;
+    z-index: var(--z-properties);
 }
 
 /* ------------------------------------------------------------
-   PAINEL DE VALIDAÇÃO (rodapé expansível, oculto por padrão)
+   VALIDATION — OVERLAY FIXO
    ------------------------------------------------------------ */
 .validation {
-    grid-area: validation;
+    position: absolute;
+    bottom: 0;
+    left: var(--sidebar-width);
+    right: var(--properties-width);
 
-    display: flex;
-    flex-direction: column;
-
-    max-height: 220px;
+    max-height: var(--validation-max-height, 280px);
+    height: auto;
 
     background-color: var(--color-surface);
     border-top: 1px solid var(--color-border);
 
+    z-index: 60;
     overflow: hidden;
-}
 
-.validation[hidden] {
-    display: none;
-}
-
-.validation__header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    padding: var(--space-2) var(--space-4);
-
-    border-bottom: 1px solid var(--color-border);
-}
-
-.validation__title {
-    font-size: var(--text-sm);
-    font-weight: 600;
-    color: var(--color-text);
-}
-
-.validation__list {
-    flex: 1;
-    padding: var(--space-2) var(--space-4);
-    margin: 0;
-
-    list-style: none;
-
-    overflow-y: auto;
-
-    font-size: var(--text-sm);
-    line-height: 1.6;
-}
-
-.validation__list li {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--space-2);
-    padding: var(--space-1) 0;
+    box-shadow: 0 -4px 16px rgba(15, 23, 42, 0.08);
 }
 
 /* ------------------------------------------------------------
    STATUS BAR
    ------------------------------------------------------------ */
 .statusbar {
-    grid-area: statusbar;
-
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: var(--space-4);
+    gap: var(--space-3);
 
-    padding: var(--space-1) var(--space-4);
-    min-height: 34px;
+    padding: 0 var(--space-3);
+    min-height: var(--statusbar-height);
+    height: var(--statusbar-height);
 
-    font-size: var(--text-xs);
-    color: var(--color-text-muted);
+    background-color: var(--statusbar-background);
+    border-top: 1px solid var(--statusbar-border);
 
-    background-color: var(--color-surface);
-    border-top: 1px solid var(--color-border);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-tertiary);
+
+    overflow: hidden;
     z-index: var(--z-statusbar);
 }
 
@@ -309,63 +244,74 @@
     display: flex;
     align-items: center;
     gap: var(--space-2);
+
+    min-width: 0;
 }
 
-.statusbar__zoom {
-    min-width: 44px;
-    text-align: center;
-
-    font-variant-numeric: tabular-nums;
-    font-weight: 500;
-    color: var(--color-text);
-}
-
-.statusbar__message {
-    color: var(--color-text-subtle);
-    max-width: 40ch;
-    overflow: hidden;
-    text-overflow: ellipsis;
+.statusbar__item {
     white-space: nowrap;
+}
+
+.statusbar__separator {
+    color: var(--color-border-strong);
+    user-select: none;
+}
+
+/* ------------------------------------------------------------
+   NOTIFICAÇÕES
+   ------------------------------------------------------------ */
+.notifications {
+    position: fixed;
+    top: calc(var(--toolbar-height) + var(--space-3));
+    right: var(--space-3);
+    z-index: var(--z-notifications);
+
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+
+    width: min(360px, calc(100vw - 32px));
+
+    pointer-events: none;
+}
+
+.notifications>* {
+    pointer-events: auto;
 }
 
 /* ------------------------------------------------------------
    RESPONSIVIDADE
    ------------------------------------------------------------ */
-
-/* Telas médias: encolhe painéis laterais */
-@media (max-width: 1100px) {
+@media (max-width: 1180px) {
     .workspace {
-        grid-template-columns: var(--sidebar-width-compact) 1fr var(--properties-width-compact);
+        grid-template-columns: var(--sidebar-width-compact) minmax(0, 1fr) var(--properties-width-compact);
+    }
+
+    .validation {
+        left: var(--sidebar-width-compact);
+        right: var(--properties-width-compact);
     }
 }
 
-/* Telas pequenas: esconde properties, mantém sidebar compacta */
-@media (max-width: 860px) {
+@media (max-width: 980px) {
     .workspace {
-        grid-template-columns: var(--sidebar-width-compact) 1fr;
+        grid-template-columns: var(--sidebar-width-mobile) minmax(0, 1fr);
         grid-template-areas: "sidebar canvas";
     }
 
     .properties {
         display: none;
     }
+
+    .validation {
+        left: var(--sidebar-width-mobile);
+        right: 0;
+    }
 }
 
-/* Telas muito pequenas: empilha toolbar e esconde sidebar */
-@media (max-width: 600px) {
-    .toolbar {
-        flex-wrap: wrap;
-        min-height: auto;
-        gap: var(--space-2);
-    }
-
-    .toolbar__actions {
-        width: 100%;
-        justify-content: flex-start;
-    }
-
+@media (max-width: 640px) {
     .workspace {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
         grid-template-areas: "canvas";
     }
 
@@ -373,8 +319,41 @@
         display: none;
     }
 
-    .statusbar {
-        flex-wrap: wrap;
-        row-gap: var(--space-1);
+    .statusbar__right {
+        display: none;
     }
+
+    .validation {
+        left: 0;
+        right: 0;
+        max-height: 45vh;
+    }
+}
+
+/* ------------------------------------------------------------
+   GARANTIA DE LAYOUT
+   ------------------------------------------------------------ */
+.workspace {
+    width: 100%;
+    height: 100%;
+}
+
+.canvas-area {
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+}
+
+.canvas-wrap {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
 }

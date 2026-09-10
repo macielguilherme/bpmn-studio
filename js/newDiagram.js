@@ -1,42 +1,33 @@
 /* ============================================================
-   BPMN Studio — js/io/newDiagram.js
-   Cria um diagrama BPMN 2.0 vazio mas válido, com um Start Event
-   centralizado. Substitui o conteúdo atual do modeler.
+   BPMN Studio — js/newDiagram.js
+   Cria um diagrama BPMN 2.0 vazio mas válido.
    ============================================================ */
 
-// ------------------------------------------------------------
-// Constantes
-// ------------------------------------------------------------
-const DEFAULT_PROCESS_ID = "Process_1";
 const DEFAULT_PROCESS_NAME = "Novo Processo";
-const DEFAULT_START_ID = "StartEvent_1";
 const DEFAULT_START_NAME = "Início";
-
 const START_EVENT_SIZE = 36;
 const START_EVENT_POS = { x: 180, y: 160 };
-
-// ------------------------------------------------------------
-// Geração do XML BPMN 2.0 inicial
-// ------------------------------------------------------------
 
 function generateSuffix() {
     return Date.now().toString(36).slice(-6);
 }
 
-/**
- * Monta o XML BPMN 2.0 inicial.
- * Inclui os namespaces obrigatórios e a seção BPMNDI completa.
- *
- * IMPORTANTE: NÃO incluímos <bpmn:outgoing> no Start Event porque
- * ele aponta para um SequenceFlow que não existe — isso gera warning
- * no bpmn-js 17.x. O bpmn-js regenera esse atributo automaticamente
- * quando o usuário conectar o Start Event a outro elemento.
- */
+function escapeXml(str) {
+    if (typeof str !== "string") return "";
+
+    return str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&apos;");
+}
+
 function buildInitialXml(options = {}) {
     const suffix = options.suffix || generateSuffix();
-    const processId = options.processId || `${DEFAULT_PROCESS_ID}_${suffix}`;
+    const processId = options.processId || `Process_1_${suffix}`;
     const processName = options.processName || DEFAULT_PROCESS_NAME;
-    const startId = options.startId || `${DEFAULT_START_ID}_${suffix}`;
+    const startId = options.startId || `StartEvent_1_${suffix}`;
     const startName = options.startName || DEFAULT_START_NAME;
 
     const { x, y } = START_EVENT_POS;
@@ -67,23 +58,9 @@ function buildInitialXml(options = {}) {
 </bpmn:definitions>`;
 }
 
-function escapeXml(str) {
-    if (typeof str !== "string") return "";
-    return str
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&apos;");
-}
-
-// ------------------------------------------------------------
-// Núcleo
-// ------------------------------------------------------------
-
 async function doCreate(modeler, options = {}) {
     if (!modeler || typeof modeler.importXML !== "function") {
-        throw new Error("Modeler inválido ou indisponível para criar diagrama.");
+        throw new Error("Modeler inválido.");
     }
 
     const xml = buildInitialXml(options);
@@ -92,7 +69,6 @@ async function doCreate(modeler, options = {}) {
     try {
         result = await modeler.importXML(xml);
     } catch (err) {
-        console.error("[BPMN Studio] falha ao criar diagrama inicial:", err);
         const wrapped = new Error(
             "Não foi possível criar o diagrama inicial. " +
             (err?.message || "")
@@ -104,9 +80,18 @@ async function doCreate(modeler, options = {}) {
     if (options.fitViewport !== false) {
         try {
             const canvas = modeler.get("canvas");
-            canvas.zoom("fit-viewport", "auto");
-        } catch (err) {
-            // silencioso — cosmético
+            // Duplo requestAnimationFrame garante que o layout já foi calculado
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    try {
+                        canvas.zoom("fit-viewport", "auto");
+                    } catch (err) {
+                        console.warn("[BPMN Studio] falha no fit:", err);
+                    }
+                });
+            });
+        } catch {
+            // silencioso
         }
     }
 
@@ -122,7 +107,7 @@ async function doCreate(modeler, options = {}) {
 }
 
 // ------------------------------------------------------------
-// API pública
+// API
 // ------------------------------------------------------------
 
 export async function run(modeler, options = {}) {
@@ -130,11 +115,9 @@ export async function run(modeler, options = {}) {
         const hasUnsaved = window.BPMNStudio?.state?.hasUnsavedChanges;
         if (hasUnsaved) {
             const ok = window.confirm(
-                "Você tem alterações não salvas. Criar um novo diagrama mesmo assim?"
+                "Você tem alterações não salvas. Criar um novo diagrama?"
             );
-            if (!ok) {
-                return null;
-            }
+            if (!ok) return null;
         }
     }
 
@@ -143,7 +126,7 @@ export async function run(modeler, options = {}) {
     const warningsCount = result.warnings?.length || 0;
     if (warningsCount > 0) {
         console.warn(
-            `[BPMN Studio] novo diagrama criado com ${warningsCount} aviso(s).`,
+            `[BPMN Studio] novo diagrama com ${warningsCount} aviso(s).`,
             result.warnings
         );
     } else {

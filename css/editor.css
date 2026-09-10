@@ -1,0 +1,526 @@
+/* ============================================================
+   BPMN Studio — editor.css
+   Canvas, bpmn-js e controles flutuantes.
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   1. CANVAS AREA
+   ------------------------------------------------------------ */
+.canvas-area {
+    background-color: var(--color-canvas);
+    position: relative;
+    overflow: hidden;
+}
+
+/* ------------------------------------------------------------
+   2. CANVAS WRAP
+   ------------------------------------------------------------ */
+.canvas-wrap {
+    position: relative;
+    width: 100%;
+    height: 100%;
+
+    background-color: var(--color-canvas);
+
+    overflow: hidden;
+}
+
+/* ------------------------------------------------------------
+   3. CANVAS + GRADE
+   ------------------------------------------------------------ */
+.canvas {
+    position: absolute;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    background-color: var(--color-canvas);
+
+    background-image:
+        radial-gradient(circle,
+            rgba(100, 116, 139, 0.22) 1px,
+            transparent 1px);
+
+    background-size: 20px 20px;
+    background-position: 0 0;
+
+    overflow: hidden;
+
+    cursor: default;
+}
+
+/* Container injetado pelo bpmn-js */
+.canvas .djs-container,
+#canvas .djs-container {
+    position: absolute;
+    inset: 0;
+
+    width: 100% !important;
+    height: 100% !important;
+
+    background: transparent !important;
+
+    overflow: hidden;
+}
+
+.canvas .bjs-container {
+    position: absolute;
+    inset: 0;
+}
+
+/* ------------------------------------------------------------
+   4. SVG DO bpmn-js
+   ------------------------------------------------------------ */
+.djs-container svg {
+    display: block;
+}
+
+.djs-container svg,
+.djs-container svg * {
+    shape-rendering: geometricPrecision;
+}
+
+/* ------------------------------------------------------------
+   5. LABELS
+   ------------------------------------------------------------ */
+.djs-label {
+    font-family: var(--font-sans) !important;
+    font-size: var(--font-size-sm);
+    fill: var(--color-text-primary);
+    pointer-events: none;
+}
+
+/* ------------------------------------------------------------
+   6. HOVER
+   ------------------------------------------------------------ */
+.djs-element:not(.djs-connection):hover .djs-visual> :first-child {
+    stroke: var(--canvas-hover-stroke);
+}
+
+.djs-connection:hover .djs-visual> :first-child {
+    stroke: var(--canvas-hover-stroke);
+}
+
+/* ------------------------------------------------------------
+   7. SELEÇÃO
+   ------------------------------------------------------------ */
+.djs-element.selected .djs-visual> :first-child {
+    stroke: var(--canvas-selection-stroke) !important;
+    stroke-width: 2px !important;
+}
+
+.djs-connection.selected .djs-visual> :first-child {
+    stroke: var(--canvas-selection-stroke) !important;
+    stroke-width: 2px !important;
+}
+
+/* ------------------------------------------------------------
+   8. OUTLINE
+   ------------------------------------------------------------ */
+.djs-outline {
+    fill: none !important;
+    stroke: var(--canvas-selection-stroke) !important;
+    stroke-width: 2px !important;
+    stroke-dasharray: none !important;
+}
+
+/* ------------------------------------------------------------
+   9. ELEMENTOS BPMN — tipografia do rótulo
+   ------------------------------------------------------------ */
+.djs-element .djs-visual> :first-child {
+    transition:
+        stroke var(--transition-fast),
+        stroke-width var(--transition-fast),
+        fill var(--transition-fast);
+}
+
+/* ------------------------------------------------------------
+   10. CONEXÕES (flows)
+   ------------------------------------------------------------ */
+.djs-connection .djs-visual path {
+    fill: none;
+    stroke: var(--bpmn-stroke);
+    stroke-width: 2px;
+}
+
+.djs-connection.selected .djs-visual path {
+    stroke: var(--canvas-selection-stroke);
+    stroke-width: 2.5px;
+}
+
+/* ------------------------------------------------------------
+   11. PALETA NATIVA DO bpmn-js — oculta
+   (usamos a nossa própria sidebar)
+   ------------------------------------------------------------ */
+.djs-palette {
+    display: none !important;
+}
+
+.djs-palette-container {
+    display: none !important;
+}
+
+/* ------------------------------------------------------------
+   12. CONTEXT PAD — botões de contexto
+   ------------------------------------------------------------ */
+.djs-context-pad {
+    position: absolute;
+    z-index: var(--z-popover);
+}
+
+.djs-context-pad .entry {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 32px;
+    height: 32px;
+
+    background-color: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+
+    box-shadow: var(--shadow-sm);
+
+    color: var(--color-text-secondary);
+
+    cursor: pointer;
+
+    transition:
+        background-color var(--transition-fast),
+        border-color var(--transition-fast),
+        color var(--transition-fast),
+        transform var(--transition-fast);
+}
+
+.djs-context-pad .entry:hover {
+    background-color: var(--color-gray-50);
+    border-color: var(--color-border-strong);
+    color: var(--color-primary-600);
+    transform: translateY(-1px);
+}
+
+/* ------------------------------------------------------------
+   13. POPUPS DO bpmn-js
+   ------------------------------------------------------------ */
+.djs-popup {
+    z-index: var(--z-popover);
+    font-family: var(--font-sans);
+}
+
+.djs-popup .entry {
+    font-family: var(--font-sans);
+}
+
+.djs-popup .entry:hover {
+    background-color: var(--color-gray-100);
+}
+
+/* ------------------------------------------------------------
+   14. OVERLAYS
+   ------------------------------------------------------------ */
+.djs-overlay-container {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: var(--z-popover);
+}
+
+.djs-overlay {
+    pointer-events: auto;
+}
+
+/* ------------------------------------------------------------
+   15. DRAG / MOVE
+   ------------------------------------------------------------ */
+.djs-dragging {
+    cursor: grabbing !important;
+}
+
+.djs-dragging .djs-element {
+    pointer-events: none;
+}
+
+.djs-dragger {
+    opacity: 0.75;
+    pointer-events: none;
+}
+
+.djs-dragger .djs-visual> :first-child {
+    stroke: var(--color-primary-500);
+    stroke-width: 2px;
+}
+
+.djs-moving {
+    cursor: move !important;
+}
+
+/* ------------------------------------------------------------
+   16. RESIZE
+   ------------------------------------------------------------ */
+.djs-resizer {
+    position: absolute;
+
+    background-color: var(--color-white);
+    border: 1px solid var(--color-primary-500);
+    border-radius: var(--radius-xs);
+}
+
+.djs-resizer:hover {
+    background-color: var(--color-primary-100);
+}
+
+/* ------------------------------------------------------------
+   17. LASSO
+   ------------------------------------------------------------ */
+.djs-lasso-overlay {
+    position: absolute;
+
+    background: rgba(37, 99, 235, 0.06);
+    border: 1px solid var(--color-primary-500);
+
+    pointer-events: none;
+}
+
+/* ------------------------------------------------------------
+   18. SPACE TOOL
+   ------------------------------------------------------------ */
+.djs-space-tool-active {
+    cursor: col-resize;
+}
+
+/* ------------------------------------------------------------
+   19. HAND TOOL
+   ------------------------------------------------------------ */
+.djs-hand-tool {
+    cursor: grab;
+}
+
+.djs-hand-tool:active {
+    cursor: grabbing;
+}
+
+/* ------------------------------------------------------------
+   20. INDICADOR DE DROP
+   ------------------------------------------------------------ */
+.canvas-wrap.is-drop-target {
+    outline: 2px dashed var(--color-primary-500);
+    outline-offset: -8px;
+    background-color: rgba(37, 99, 235, 0.03);
+}
+
+/* ------------------------------------------------------------
+   21. CANVAS CONTROLS — flutuantes
+   ------------------------------------------------------------ */
+.canvas-controls {
+    position: absolute;
+    right: var(--space-3);
+    bottom: var(--space-3);
+
+    display: flex;
+    align-items: center;
+
+    background-color: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+
+    overflow: hidden;
+
+    z-index: var(--z-canvas-controls);
+}
+
+.canvas-control {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 34px;
+    height: 34px;
+    padding: 0;
+
+    color: var(--color-text-secondary);
+    background-color: var(--color-white);
+    border: 0;
+
+    font-family: var(--font-sans);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-medium);
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition:
+        background-color var(--transition-fast),
+        color var(--transition-fast);
+}
+
+.canvas-control+.canvas-control {
+    border-left: 1px solid var(--color-border-light);
+}
+
+.canvas-control:hover {
+    background-color: var(--color-gray-50);
+    color: var(--color-primary-600);
+}
+
+.canvas-control:active {
+    background-color: var(--color-gray-100);
+}
+
+.canvas-control:focus-visible {
+    outline: none;
+    box-shadow: inset var(--focus-ring);
+}
+
+.canvas-control--fit {
+    font-size: var(--font-size-base);
+}
+
+/* ------------------------------------------------------------
+   22. BADGE BPMN
+   ------------------------------------------------------------ */
+.bpmn-badge {
+    position: absolute;
+    left: var(--space-3);
+    bottom: var(--space-3);
+
+    display: inline-flex;
+    align-items: center;
+
+    min-height: 24px;
+    padding: 0 var(--space-2);
+
+    color: var(--color-text-tertiary);
+    background-color: rgba(255, 255, 255, 0.94);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+
+    font-family: var(--font-mono);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+
+    box-shadow: var(--shadow-xs);
+
+    pointer-events: none;
+}
+
+/* ------------------------------------------------------------
+   23. EMPTY STATE DO CANVAS
+   ------------------------------------------------------------ */
+.canvas-empty-state {
+    position: absolute;
+    inset: 0;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+
+    pointer-events: none;
+
+    z-index: var(--z-empty-state);
+}
+
+.canvas-empty-state[hidden] {
+    display: none;
+}
+
+.canvas-empty-state__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 44px;
+    height: 44px;
+
+    margin-bottom: var(--space-3);
+
+    color: var(--color-primary-600);
+    background-color: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+
+    font-size: var(--font-size-2xl);
+
+    box-shadow: var(--shadow-xs);
+}
+
+.canvas-empty-state__title {
+    margin: 0 0 var(--space-2);
+    color: var(--color-text-primary);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+}
+
+.canvas-empty-state__text {
+    max-width: 320px;
+    margin: 0;
+    color: var(--color-text-tertiary);
+    font-size: var(--font-size-base);
+    line-height: 1.6;
+}
+
+/* ------------------------------------------------------------
+   24. READONLY
+   ------------------------------------------------------------ */
+.canvas.bpmn-studio-readonly {
+    cursor: default;
+}
+
+.bpmn-studio-readonly .djs-context-pad {
+    display: none !important;
+}
+
+/* ------------------------------------------------------------
+   25. IMPRESSÃO
+   ------------------------------------------------------------ */
+@media print {
+
+    .toolbar,
+    .sidebar,
+    .properties,
+    .validation,
+    .statusbar,
+    .canvas-controls,
+    .bpmn-badge,
+    .notifications {
+        display: none !important;
+    }
+
+    .canvas {
+        background-image: none;
+        background-color: var(--color-white);
+    }
+}
+
+/* ------------------------------------------------------------
+   26. PERFORMANCE
+   ------------------------------------------------------------ */
+.djs-container svg {
+    will-change: transform;
+}
+
+.djs-connection,
+.djs-element {
+    user-select: none;
+}
+
+/* ------------------------------------------------------------
+   GARANTIA — o container do bpmn-js deve preencher o canvas
+   ------------------------------------------------------------ */
+#canvas .djs-container,
+.canvas .djs-container {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+#canvas .bjs-container {
+    width: 100% !important;
+    height: 100% !important;
+}

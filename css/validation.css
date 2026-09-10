@@ -1,0 +1,633 @@
+/* ============================================================
+   BPMN Studio — validation.css
+   Painel de validação — cards + toggles por nível + botão resolver.
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   1. PAINEL
+   ------------------------------------------------------------ */
+.validation {
+    display: flex;
+    flex-direction: column;
+
+    background-color: var(--color-white);
+    border-top: 1px solid var(--color-border);
+    color: var(--color-text-primary);
+
+    max-height: var(--validation-max-height, 340px);
+    overflow: hidden;
+}
+
+.validation[hidden] {
+    display: none !important;
+}
+
+.validation.is-open {
+    display: flex;
+}
+
+/* ------------------------------------------------------------
+   2. CABEÇALHO
+   ------------------------------------------------------------ */
+.validation__header {
+    flex: 0 0 auto;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+
+    min-height: 54px;
+    padding: 0 var(--space-4);
+
+    background-color: var(--color-white);
+    border-bottom: 1px solid var(--color-border-light);
+}
+
+.validation__heading {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-width: 0;
+}
+
+.validation__icon {
+    flex-shrink: 0;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 30px;
+    height: 30px;
+
+    color: var(--color-success-600);
+    background-color: var(--color-success-50);
+    border-radius: var(--radius-md);
+
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+
+    transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.validation__title {
+    margin: 0;
+    color: var(--color-text-primary);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    line-height: 1.3;
+}
+
+.validation__summary {
+    margin: 2px 0 0;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-xs);
+    line-height: 1.35;
+}
+
+.validation__close {
+    flex-shrink: 0;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 30px;
+    height: 30px;
+    padding: 0;
+
+    color: var(--color-text-muted);
+    background: transparent;
+    border: 0;
+    border-radius: var(--radius-md);
+
+    font-size: 18px;
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.validation__close:hover {
+    background-color: var(--color-gray-100);
+    color: var(--color-text-primary);
+}
+
+.validation__close:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+}
+
+/* ------------------------------------------------------------
+   3. TOGGLES POR NÍVEL
+   ------------------------------------------------------------ */
+.validation__filters {
+    flex: 0 0 auto;
+
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+
+    padding: var(--space-2) var(--space-4);
+
+    background-color: var(--color-gray-50);
+    border-bottom: 1px solid var(--color-border-light);
+}
+
+.validation-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    min-height: 26px;
+    padding: 0 9px 0 7px;
+
+    background-color: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+
+    font-family: var(--font-sans);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    line-height: 1;
+
+    color: var(--color-text-secondary);
+
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+
+    transition:
+        background-color var(--transition-fast),
+        border-color var(--transition-fast),
+        color var(--transition-fast),
+        opacity var(--transition-fast);
+}
+
+.validation-toggle:hover {
+    border-color: var(--color-border-strong);
+}
+
+.validation-toggle:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+}
+
+.validation-toggle__dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    flex-shrink: 0;
+    border-radius: var(--radius-full);
+    background-color: var(--color-gray-400);
+}
+
+.validation-toggle__count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+
+    background-color: var(--color-gray-100);
+    color: var(--color-text-secondary);
+    border-radius: var(--radius-full);
+
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: var(--font-weight-semibold);
+    line-height: 1;
+}
+
+/* -------- CORES POR NÍVEL -------- */
+.validation-toggle--error .validation-toggle__dot {
+    background-color: var(--color-danger-500);
+}
+.validation-toggle--error[aria-pressed="true"] {
+    color: var(--color-danger-700);
+    background-color: var(--color-danger-50);
+    border-color: var(--color-danger-100);
+}
+.validation-toggle--error[aria-pressed="true"] .validation-toggle__count {
+    background-color: var(--color-danger-100);
+    color: var(--color-danger-700);
+}
+
+.validation-toggle--warning .validation-toggle__dot {
+    background-color: var(--color-warning-500);
+}
+.validation-toggle--warning[aria-pressed="true"] {
+    color: var(--color-warning-700);
+    background-color: var(--color-warning-50);
+    border-color: var(--color-warning-100);
+}
+.validation-toggle--warning[aria-pressed="true"] .validation-toggle__count {
+    background-color: var(--color-warning-100);
+    color: var(--color-warning-700);
+}
+
+.validation-toggle--info .validation-toggle__dot {
+    background-color: var(--color-info-500);
+}
+.validation-toggle--info[aria-pressed="true"] {
+    color: var(--color-info-700);
+    background-color: var(--color-info-50);
+    border-color: var(--color-info-100);
+}
+.validation-toggle--info[aria-pressed="true"] .validation-toggle__count {
+    background-color: var(--color-info-100);
+    color: var(--color-info-700);
+}
+
+.validation-toggle--success .validation-toggle__dot {
+    background-color: var(--color-success-500);
+}
+.validation-toggle--success[aria-pressed="true"] {
+    color: var(--color-success-700);
+    background-color: var(--color-success-50);
+    border-color: var(--color-success-100);
+}
+.validation-toggle--success[aria-pressed="true"] .validation-toggle__count {
+    background-color: var(--color-success-100);
+    color: var(--color-success-700);
+}
+
+.validation-toggle[aria-pressed="false"] {
+    opacity: 0.4;
+    background-color: transparent;
+}
+.validation-toggle[aria-pressed="false"] .validation-toggle__dot {
+    background-color: var(--color-gray-300);
+}
+.validation-toggle[aria-pressed="false"] .validation-toggle__count {
+    background-color: var(--color-gray-100);
+    color: var(--color-text-muted);
+}
+
+.validation-toggle:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.validation__filters-spacer {
+    flex: 1 1 auto;
+    min-width: var(--space-2);
+}
+
+.validation__filters-action {
+    background: transparent;
+    border: 0;
+    padding: 4px 6px;
+
+    color: var(--color-text-tertiary);
+    font-family: var(--font-sans);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+
+    transition: color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.validation__filters-action:hover {
+    color: var(--color-primary-600);
+    background-color: var(--color-gray-100);
+}
+
+/* ------------------------------------------------------------
+   4. LISTA
+   ------------------------------------------------------------ */
+.validation__list {
+    flex: 1 1 auto;
+    min-height: 0;
+
+    padding: var(--space-3) var(--space-4);
+
+    background-color: var(--color-gray-50);
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) transparent;
+}
+
+.validation__list::-webkit-scrollbar {
+    width: var(--scrollbar-size);
+}
+
+.validation__list::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-thumb);
+    border-radius: var(--radius-full);
+}
+
+/* ------------------------------------------------------------
+   5. ESTADO VAZIO
+   ------------------------------------------------------------ */
+.validation-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+
+    min-height: 74px;
+    padding: var(--space-4);
+
+    color: var(--color-text-muted);
+    font-size: var(--font-size-sm);
+    text-align: center;
+}
+
+.validation-empty__icon {
+    flex-shrink: 0;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 26px;
+    height: 26px;
+
+    color: var(--color-success-600);
+    background-color: var(--color-success-50);
+    border: 1px solid var(--color-success-100);
+    border-radius: var(--radius-full);
+
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+}
+
+/* ------------------------------------------------------------
+   6. CARD DO ITEM
+   ------------------------------------------------------------ */
+.validation-item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+
+    width: 100%;
+    margin-bottom: var(--space-2);
+    padding: var(--space-3);
+
+    background-color: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-left: 3px solid var(--color-gray-300);
+    border-radius: var(--radius-md);
+
+    box-shadow: var(--shadow-xs);
+
+    transition:
+        border-color var(--transition-fast),
+        box-shadow var(--transition-fast),
+        transform var(--transition-fast);
+}
+
+.validation-item:last-child {
+    margin-bottom: 0;
+}
+
+.validation-item.is-clickable {
+    cursor: pointer;
+}
+
+.validation-item.is-clickable:hover {
+    border-color: var(--color-border-strong);
+    box-shadow: var(--shadow-sm);
+}
+
+/* ------------------------------------------------------------
+   7. ÍCONE DO CARD (texto puro, sem emoji)
+   ------------------------------------------------------------ */
+.validation-item__icon {
+    flex-shrink: 0;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 24px;
+    height: 24px;
+
+    border-radius: var(--radius-sm);
+
+    font-family: var(--font-mono);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    line-height: 1;
+
+    background-color: var(--color-gray-100);
+    color: var(--color-text-secondary);
+}
+
+/* ------------------------------------------------------------
+   8. CONTEÚDO DO CARD
+   ------------------------------------------------------------ */
+.validation-item__content {
+    flex: 1 1 auto;
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.validation-item__message {
+    margin: 0;
+
+    color: var(--color-text-primary);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.45;
+}
+
+.validation-item__hint {
+    margin: 0;
+
+    color: var(--color-text-tertiary);
+    font-size: var(--font-size-xs);
+    line-height: 1.5;
+}
+
+.validation-item__hint::before {
+    content: "→ ";
+    color: var(--color-text-muted);
+}
+
+/* ------------------------------------------------------------
+   9. AÇÕES DO CARD
+   ------------------------------------------------------------ */
+.validation-item__actions {
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+
+    align-self: center;
+    padding-left: var(--space-2);
+}
+
+.validation-item__fix {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 28px;
+    padding: 0 var(--space-3);
+
+    background-color: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+
+    font-family: var(--font-sans);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    line-height: 1;
+
+    color: var(--color-text-secondary);
+
+    cursor: pointer;
+    white-space: nowrap;
+
+    transition:
+        background-color var(--transition-fast),
+        border-color var(--transition-fast),
+        color var(--transition-fast);
+}
+
+.validation-item__fix:hover {
+    color: var(--color-primary-700);
+    background-color: var(--color-primary-50);
+    border-color: var(--color-primary-200);
+}
+
+.validation-item__fix:active {
+    background-color: var(--color-primary-100);
+}
+
+.validation-item__fix:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+}
+
+.validation-item__fix:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    color: var(--color-text-muted);
+    background-color: var(--color-gray-50);
+    border-color: var(--color-border);
+}
+
+/* ------------------------------------------------------------
+   10. NÍVEIS — CORES
+   ------------------------------------------------------------ */
+
+/* Erro */
+.validation-item--error {
+    border-left-color: var(--color-danger-500);
+}
+.validation-item--error .validation-item__icon {
+    color: var(--color-danger-700);
+    background-color: var(--color-danger-50);
+}
+.validation-item--error .validation-item__message {
+    color: var(--color-danger-700);
+}
+
+/* Aviso */
+.validation-item--warning {
+    border-left-color: var(--color-warning-500);
+}
+.validation-item--warning .validation-item__icon {
+    color: var(--color-warning-700);
+    background-color: var(--color-warning-50);
+}
+.validation-item--warning .validation-item__message {
+    color: var(--color-warning-700);
+}
+
+/* Info */
+.validation-item--info {
+    border-left-color: var(--color-info-500);
+}
+.validation-item--info .validation-item__icon {
+    color: var(--color-info-700);
+    background-color: var(--color-info-50);
+}
+.validation-item--info .validation-item__message {
+    color: var(--color-info-700);
+}
+
+/* Sucesso */
+.validation-item--success {
+    border-left-color: var(--color-success-500);
+}
+.validation-item--success .validation-item__icon {
+    color: var(--color-success-700);
+    background-color: var(--color-success-50);
+}
+.validation-item--success .validation-item__message {
+    color: var(--color-success-700);
+}
+
+/* ------------------------------------------------------------
+   11. ESTADOS DO PAINEL
+   ------------------------------------------------------------ */
+.validation.is-valid .validation__icon {
+    color: var(--color-success-600);
+    background-color: var(--color-success-50);
+}
+.validation.has-errors .validation__icon {
+    color: var(--color-danger-600);
+    background-color: var(--color-danger-50);
+}
+.validation.has-warnings:not(.has-errors) .validation__icon {
+    color: var(--color-warning-600);
+    background-color: var(--color-warning-50);
+}
+.validation.has-errors .validation__summary {
+    color: var(--color-danger-700);
+}
+.validation.has-warnings:not(.has-errors) .validation__summary {
+    color: var(--color-warning-700);
+}
+
+/* ------------------------------------------------------------
+   12. RESPONSIVIDADE
+   ------------------------------------------------------------ */
+@media (max-width: 640px) {
+    .validation {
+        max-height: 55vh;
+    }
+
+    .validation__header {
+        min-height: 50px;
+        padding: 0 var(--space-3);
+    }
+
+    .validation__filters {
+        padding: var(--space-2);
+    }
+
+    .validation__list {
+        padding: var(--space-2);
+    }
+
+    .validation-item {
+        padding: var(--space-2);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .validation-item,
+    .validation__close,
+    .validation-toggle,
+    .validation-item__fix {
+        transition: none;
+    }
+}

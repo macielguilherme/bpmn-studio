@@ -1,185 +1,311 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="BPMN Studio — modelador visual de processos BPMN 2.0 direto no navegador. Crie, edite e exporte diagramas BPMN compatíveis com qualquer ferramenta." />
-    <meta name="author" content="Guilherme Maciel" />
-    <meta name="theme-color" content="#1f2937" />
+    <meta charset="UTF-8">
+    <base href="/bpmn-studio/">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="BPMN Studio — Editor visual de processos BPMN 2.0">
+    <meta name="theme-color" content="#2563eb">
 
-    <title>BPMN Studio — Modelador BPMN 2.0 no navegador</title>
+    <title>BPMN Studio — Editor BPMN 2.0</title>
 
-    <!-- Favicon placeholder (troque depois por um SVG próprio) -->
-    <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
 
-    <!-- ============================================================
-         CSS — ordem importa: reset → variáveis → layout → componentes → tema
-         ============================================================ -->
-    <link rel="stylesheet" href="css/reset.css" />
-    <link rel="stylesheet" href="css/variables.css" />
-    <link rel="stylesheet" href="css/layout.css" />
-    <link rel="stylesheet" href="css/components.css" />
-    <link rel="stylesheet" href="css/style.css" />
+    <!-- =========================================================
+         FONTES
+         ========================================================= -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
 
-    <!-- ============================================================
-         bpmn-js (CDN, versão fixada)
-         - bpmn-modeler.development.js: bundle completo do modeler
-         - diagram-js.css: estilos base do canvas
-         - bpmn-js.css: estilos específicos de BPMN (paleta, context pad, etc.)
-         ============================================================ -->
-    <link rel="stylesheet" href="https://unpkg.com/bpmn-js@17.11.1/dist/assets/diagram-js.css" />
-    <link rel="stylesheet" href="https://unpkg.com/bpmn-js@17.11.1/dist/assets/bpmn-js.css" />
-    <link rel="stylesheet" href="https://unpkg.com/bpmn-js@17.11.1/dist/assets/bpmn-font/css/bpmn.css" />
+    <!-- =========================================================
+         ESTILOS — ORDEM OBRIGATÓRIA
+         ========================================================= -->
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/editor.css">
+    <link rel="stylesheet" href="css/properties.css">
+    <link rel="stylesheet" href="css/validation.css">
+    <link rel="stylesheet" href="css/toolbar.css">
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- =========================================================
+         bpmn-js (CDN — versão fixada)
+         ========================================================= -->
+    <link rel="stylesheet" href="https://unpkg.com/bpmn-js@17.11.1/dist/assets/diagram-js.css">
+    <link rel="stylesheet" href="https://unpkg.com/bpmn-js@17.11.1/dist/assets/bpmn-js.css">
+    <link rel="stylesheet" href="https://unpkg.com/bpmn-js@17.11.1/dist/assets/bpmn-font/css/bpmn-embedded.css">
 </head>
 
 <body>
-    <!-- ============================================================
-         APP SHELL
-         ============================================================ -->
+    <!-- =========================================================
+         APP
+         Estrutura: toolbar / workspace / statusbar
+         ========================================================= -->
     <div id="app" class="app">
 
-        <!-- ---------- TOOLBAR SUPERIOR ---------- -->
-        <header class="toolbar" id="toolbar" role="banner">
+        <!-- =====================================================
+             TOOLBAR SUPERIOR
+             ===================================================== -->
+        <header id="toolbar" class="toolbar" role="banner" aria-label="Barra de ferramentas">
+
+            <!-- Identidade -->
             <div class="toolbar__brand">
-                <span class="toolbar__logo" aria-hidden="true">◈</span>
-                <span class="toolbar__title">BPMN Studio</span>
+                <div class="brand-mark" aria-hidden="true">
+                    <span class="brand-mark__icon">B</span>
+                </div>
+                <div class="brand-text">
+                    <span class="brand-text__name">BPMN Studio</span>
+                    <span class="brand-text__version">2.0</span>
+                </div>
             </div>
 
-            <nav class="toolbar__actions" aria-label="Ações do arquivo">
-                <button type="button" class="btn" data-action="new" title="Novo diagrama (Ctrl+N)">
-                    Novo
-                </button>
-                <button type="button" class="btn" data-action="open" title="Abrir arquivo BPMN (Ctrl+O)">
-                    Abrir
-                </button>
-                <button type="button" class="btn" data-action="save" title="Salvar/exportar BPMN (Ctrl+S)">
-                    Salvar
-                </button>
-                <button type="button" class="btn btn--primary" data-action="export" title="Exportar BPMN 2.0 XML">
-                    Exportar BPMN
-                </button>
-            </nav>
+            <div class="toolbar__divider" aria-hidden="true"></div>
 
-            <!-- input escondido usado pelo botão "Abrir" -->
-            <input
-                type="file"
-                id="file-input"
-                accept=".bpmn,.bpmn20.xml,.xml,application/xml,text/xml"
-                hidden
-            />
+            <!-- Arquivo -->
+            <div class="toolbar__group toolbar__group--file" aria-label="Arquivo">
+                <button id="btn-new" class="toolbar-btn" type="button" title="Novo diagrama (Ctrl+N)"
+                    aria-label="Novo diagrama" data-action="new">
+                    <span class="toolbar-btn__icon" aria-hidden="true">+</span>
+                    <span class="toolbar-btn__label">Novo</span>
+                </button>
+
+                <button id="btn-import" class="toolbar-btn" type="button" title="Importar BPMN (Ctrl+O)"
+                    aria-label="Importar arquivo BPMN" data-action="import">
+                    <span class="toolbar-btn__icon" aria-hidden="true">↑</span>
+                    <span class="toolbar-btn__label">Importar</span>
+                </button>
+
+                <button id="btn-export" class="toolbar-btn" type="button" title="Exportar BPMN (Ctrl+S)"
+                    aria-label="Exportar arquivo BPMN" data-action="export">
+                    <span class="toolbar-btn__icon" aria-hidden="true">↓</span>
+                    <span class="toolbar-btn__label">Exportar</span>
+                </button>
+            </div>
+
+            <div class="toolbar__divider" aria-hidden="true"></div>
+
+            <!-- Histórico -->
+            <div class="toolbar__group" aria-label="Histórico">
+                <button id="btn-undo" class="toolbar-btn toolbar-btn--icon-only" type="button" title="Desfazer (Ctrl+Z)"
+                    aria-label="Desfazer" data-action="undo">
+                    <span aria-hidden="true">↶</span>
+                </button>
+
+                <button id="btn-redo" class="toolbar-btn toolbar-btn--icon-only" type="button"
+                    title="Refazer (Ctrl+Shift+Z)" aria-label="Refazer" data-action="redo">
+                    <span aria-hidden="true">↷</span>
+                </button>
+            </div>
+
+            <div class="toolbar__divider" aria-hidden="true"></div>
+
+            <!-- Editor -->
+            <div class="toolbar__group" aria-label="Editor">
+                <button id="btn-validate" class="toolbar-btn" type="button" title="Validar diagrama (Ctrl+Shift+V)"
+                    aria-label="Validar diagrama" data-action="validate">
+                    <span class="toolbar-btn__icon" aria-hidden="true">✓</span>
+                    <span class="toolbar-btn__label">Validar</span>
+                </button>
+
+                <button id="btn-readonly" class="toolbar-btn" type="button" title="Alternar modo somente leitura"
+                    aria-label="Alternar modo somente leitura" data-action="readonly" aria-pressed="false">
+                    <span class="toolbar-btn__icon" aria-hidden="true">◉</span>
+                    <span class="toolbar-btn__label">Editar</span>
+                </button>
+            </div>
+
+            <div class="toolbar__spacer"></div>
+
+            <!-- Estado do documento -->
+            <div id="save-state" class="toolbar-state" data-state="saved" aria-live="polite">
+                <span class="toolbar-state__dot" aria-hidden="true"></span>
+                <span id="save-state-text" class="toolbar-state__text">Pronto</span>
+            </div>
+
+            <!-- Zoom -->
+            <div class="toolbar__zoom" aria-label="Controles de zoom">
+                <button id="btn-zoom-out" class="toolbar-btn toolbar-btn--icon-only" type="button"
+                    title="Diminuir zoom (Ctrl+-)" aria-label="Diminuir zoom" data-action="zoom-out">
+                    <span aria-hidden="true">−</span>
+                </button>
+
+                <button id="btn-zoom-fit" class="zoom-value" type="button" title="Ajustar diagrama à tela (F)"
+                    aria-label="Ajustar diagrama" data-action="zoom-fit">
+                    <span id="zoom-level-status">100%</span>
+                </button>
+
+                <button id="btn-zoom-in" class="toolbar-btn toolbar-btn--icon-only" type="button"
+                    title="Aumentar zoom (Ctrl++)" aria-label="Aumentar zoom" data-action="zoom-in">
+                    <span aria-hidden="true">+</span>
+                </button>
+            </div>
         </header>
 
-        <!-- ---------- CORPO PRINCIPAL ---------- -->
-        <main class="workspace" role="main">
+        <!-- =====================================================
+             WORKSPACE
+             Grid: sidebar / canvas / properties
+             ===================================================== -->
+        <main id="workspace" class="workspace">
 
-            <!-- ---------- SIDEBAR DE ELEMENTOS ---------- -->
-            <aside class="sidebar" id="sidebar" aria-label="Elementos BPMN">
-                <section class="sidebar__group">
-                    <h2 class="sidebar__title">Eventos</h2>
-                    <ul class="sidebar__list" data-group="events">
-                        <li><button type="button" class="element-btn" data-element="bpmn:StartEvent">Início</button></li>
-                        <li><button type="button" class="element-btn" data-element="bpmn:IntermediateThrowEvent">Intermediário</button></li>
-                        <li><button type="button" class="element-btn" data-element="bpmn:EndEvent">Fim</button></li>
-                    </ul>
-                </section>
+            <!-- SIDEBAR -->
+            <aside id="sidebar" class="sidebar" aria-label="Elementos BPMN">
+                <div class="sidebar__header">
+                    <h1 class="sidebar__title">Elementos</h1>
+                    <p class="sidebar__subtitle">Arraste para o canvas</p>
+                </div>
 
-                <section class="sidebar__group">
-                    <h2 class="sidebar__title">Tarefas</h2>
-                    <ul class="sidebar__list" data-group="tasks">
-                        <li><button type="button" class="element-btn" data-element="bpmn:Task">Tarefa</button></li>
-                        <li><button type="button" class="element-btn" data-element="bpmn:UserTask">Tarefa de Usuário</button></li>
-                        <li><button type="button" class="element-btn" data-element="bpmn:ServiceTask">Tarefa de Serviço</button></li>
-                        <li><button type="button" class="element-btn" data-element="bpmn:SubProcess">Subprocesso</button></li>
-                    </ul>
-                </section>
+                <!-- O palette.js injeta a busca e os grupos aqui -->
+                <div id="palette-container" class="sidebar__content"></div>
 
-                <section class="sidebar__group">
-                    <h2 class="sidebar__title">Gateways</h2>
-                    <ul class="sidebar__list" data-group="gateways">
-                        <li><button type="button" class="element-btn" data-element="bpmn:ExclusiveGateway">Exclusivo</button></li>
-                        <li><button type="button" class="element-btn" data-element="bpmn:ParallelGateway">Paralelo</button></li>
-                        <li><button type="button" class="element-btn" data-element="bpmn:InclusiveGateway">Inclusivo</button></li>
-                    </ul>
-                </section>
-
-                <section class="sidebar__group">
-                    <h2 class="sidebar__title">Conectores</h2>
-                    <ul class="sidebar__list" data-group="connectors">
-                        <li><button type="button" class="element-btn" data-element="bpmn:SequenceFlow">Sequence Flow</button></li>
-                        <li><button type="button" class="element-btn" data-element="bpmn:MessageFlow">Message Flow</button></li>
-                    </ul>
-                </section>
-
-                <section class="sidebar__group">
-                    <h2 class="sidebar__title">Outros</h2>
-                    <ul class="sidebar__list" data-group="others">
-                        <li><button type="button" class="element-btn" data-element="bpmn:Participant">Pool</button></li>
-                        <li><button type="button" class="element-btn" data-element="bpmn:Lane">Lane</button></li>
-                        <li><button type="button" class="element-btn" data-element="bpmn:DataObjectReference">Data Object</button></li>
-                    </ul>
-                </section>
-            </aside>
-
-            <!-- ---------- ÁREA DE MODELAGEM ---------- -->
-            <section class="canvas-wrap" aria-label="Área de modelagem">
-                <div id="canvas" class="canvas"></div>
-            </section>
-
-            <!-- ---------- PAINEL DE PROPRIEDADES ---------- -->
-            <aside class="properties" id="properties" aria-label="Propriedades">
-                <h2 class="properties__title">Propriedades</h2>
-                <div class="properties__body" id="properties-body">
-                    <p class="properties__empty">Nenhum elemento selecionado.</p>
+                <div class="sidebar__footer">
+                    <span class="sidebar__hint">Atalho</span>
+                    <kbd>/</kbd>
+                    <span class="sidebar__hint">buscar</span>
                 </div>
             </aside>
+
+            <!-- CANVAS -->
+            <section id="canvas-area" class="canvas-area" aria-label="Área de modelagem">
+                <div id="canvas-wrap" class="canvas-wrap">
+
+                    <!-- Onde o bpmn-js injeta o SVG -->
+                    <div id="canvas" class="canvas" role="application" aria-label="Área de desenho do diagrama BPMN">
+                    </div>
+
+                    <!-- Controles flutuantes -->
+                    <div class="canvas-controls" role="group" aria-label="Controles do canvas">
+                        <button id="canvas-zoom-out" class="canvas-control" type="button" title="Diminuir zoom"
+                            aria-label="Diminuir zoom" data-action="zoom-out">−</button>
+
+                        <button id="canvas-zoom-fit" class="canvas-control canvas-control--fit" type="button"
+                            title="Ajustar diagrama" aria-label="Ajustar diagrama à tela"
+                            data-action="zoom-fit">⛶</button>
+
+                        <button id="canvas-zoom-in" class="canvas-control" type="button" title="Aumentar zoom"
+                            aria-label="Aumentar zoom" data-action="zoom-in">+</button>
+                    </div>
+
+                    <!-- Badge BPMN -->
+                    <div id="bpmn-badge" class="bpmn-badge" aria-label="Versão BPMN">
+                        BPMN 2.0
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- PROPRIEDADES -->
+            <aside id="properties" class="properties" aria-label="Propriedades do elemento">
+                <div class="properties__header">
+                    <div class="properties__heading">
+                        <span class="properties__eyebrow">ELEMENTO</span>
+                        <h2 id="properties-title" class="properties__title">Propriedades</h2>
+                    </div>
+
+                    <button id="properties-close" class="properties__close" type="button" title="Fechar propriedades"
+                        aria-label="Fechar painel de propriedades">×</button>
+                </div>
+
+                <div id="properties-body" class="properties__body">
+                    <div id="properties-empty" class="properties-empty">
+                        <div class="properties-empty__icon" aria-hidden="true">◇</div>
+                        <h3 class="properties-empty__title">Nenhum elemento selecionado</h3>
+                        <p class="properties-empty__text">
+                            Selecione um elemento do diagrama para visualizar
+                            e editar suas propriedades.
+                        </p>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- VALIDAÇÃO — começa FECHADA com atributo hidden -->
+            <section id="validation" class="validation" aria-label="Validação do diagrama" hidden>
+                <div class="validation__header">
+                    <div class="validation__heading">
+                        <span class="validation__icon" aria-hidden="true">✓</span>
+                        <div>
+                            <h2 class="validation__title">Validação</h2>
+                            <p id="validation-summary" class="validation__summary">
+                                Nenhuma validação executada.
+                            </p>
+                        </div>
+                    </div>
+
+                    <button id="validation-close" class="validation__close" type="button" title="Fechar validação"
+                        aria-label="Fechar painel de validação">×</button>
+                </div>
+
+                <!-- Filtros por nível — preenchidos pelo validator.js -->
+                <div class="validation__filters" role="toolbar" aria-label="Filtros de validação"></div>
+
+                <div id="validation-list" class="validation__list" aria-live="polite">
+                    <div class="validation-empty">
+                        <span class="validation-empty__icon" aria-hidden="true">✓</span>
+                        <span>Execute a validação para verificar o diagrama.</span>
+                    </div>
+                </div>
+            </section>
         </main>
 
-        <!-- ---------- PAINEL DE VALIDAÇÃO (oculto por padrão) ---------- -->
-        <section class="validation" id="validation" aria-label="Validação BPMN" hidden>
-            <header class="validation__header">
-                <h2 class="validation__title">Validação BPMN</h2>
-                <button type="button" class="btn btn--ghost" data-action="close-validation">Fechar</button>
-            </header>
-            <ul class="validation__list" id="validation-list"></ul>
-        </section>
-
-        <!-- ---------- STATUS BAR ---------- -->
-        <footer class="statusbar" id="statusbar" role="contentinfo">
+        <!-- =====================================================
+             STATUS BAR
+             ===================================================== -->
+        <footer id="statusbar" class="statusbar" role="contentinfo">
             <div class="statusbar__left">
-                <button type="button" class="btn btn--icon" data-action="zoom-out" title="Zoom −">−</button>
-                <span class="statusbar__zoom" id="zoom-level">100%</span>
-                <button type="button" class="btn btn--icon" data-action="zoom-in" title="Zoom +">+</button>
-                <button type="button" class="btn btn--icon" data-action="zoom-fit" title="Centralizar diagrama">⤢</button>
+                <span id="status-indicator" class="statusbar__indicator" aria-hidden="true"></span>
+                <span id="status-message" class="statusbar__message" aria-live="polite">Pronto</span>
             </div>
 
             <div class="statusbar__right">
-                <span class="statusbar__badge" id="bpmn-badge" title="Compatibilidade BPMN 2.0">BPMN 2.0 ✓</span>
-                <span class="statusbar__message" id="status-message" aria-live="polite"></span>
+                <span id="element-count" class="statusbar__item">0 elementos</span>
+                <span class="statusbar__separator" aria-hidden="true">|</span>
+                <span class="statusbar__item">
+                    Zoom: <strong id="zoom-level">100%</strong>
+                </span>
+                <span class="statusbar__separator" aria-hidden="true">|</span>
+                <span id="bpmn-status" class="statusbar__item">BPMN 2.0</span>
             </div>
         </footer>
     </div>
 
-    <!-- ---------- ÁREA DE NOTIFICAÇÕES (toasts) ---------- -->
+    <!-- =========================================================
+         FORA DO APP (não fazem parte do grid)
+         ========================================================= -->
+
+    <!-- Notificações (toasts) -->
     <div id="notifications" class="notifications" aria-live="polite" aria-atomic="true"></div>
 
-    <!-- ============================================================
-         SCRIPTS
-         Ordem importa:
-         1. bpmn-js do CDN (define window.BpmnJS)
-         2. seus módulos em ordem de dependência
-         ============================================================ -->
-    <script src="https://unpkg.com/bpmn-js@17.11.1/dist/bpmn-modeler.development.js"></script>
+    <!-- Input oculto para importação -->
+    <input id="file-input" type="file" accept=".bpmn,.bpmn20.xml,.xml,application/xml,text/xml" hidden>
 
-    <script type="module" src="js/ui/notifications.js"></script>
-    <script type="module" src="js/ui/statusbar.js"></script>
-    <script type="module" src="js/ui/toolbar.js"></script>
-    <script type="module" src="js/editor/palette.js"></script>
-    <script type="module" src="js/editor/properties.js"></script>
-    <script type="module" src="js/editor/modeler.js"></script>
-    <script type="module" src="js/io/newDiagram.js"></script>
-    <script type="module" src="js/io/exportBpmn.js"></script>
-    <script type="module" src="js/io/importBpmn.js"></script>
-    <script type="module" src="js/validation/validator.js"></script>
+    <!-- =========================================================
+         SCRIPT bpmn-js (CDN)
+         ========================================================= -->
+    <script src="https://unpkg.com/bpmn-js@17.11.1/dist/bpmn-modeler.production.min.js"></script>
+
+    <!-- =========================================================
+         SCRIPT PRINCIPAL
+         O main.js importa todos os outros módulos.
+         NÃO adicione outros <script type="module"> aqui.
+         ========================================================= -->
     <script type="module" src="js/main.js"></script>
+
+    <!-- =========================================================
+         FALLBACK SEM JS
+         ========================================================= -->
+    <noscript>
+        <div
+            style="position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:32px;background:#fff;color:#111827;font-family:system-ui,sans-serif;text-align:center;">
+            <div>
+                <h1 style="margin:0 0 12px;font-size:22px;">BPMN Studio</h1>
+                <p style="margin:0;color:#475569;">
+                    Este editor precisa do JavaScript habilitado para funcionar.
+                </p>
+            </div>
+        </div>
+    </noscript>
 </body>
+
 </html>

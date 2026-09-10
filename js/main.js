@@ -1,36 +1,33 @@
 /* ============================================================
-   BPMN Studio — main.js
-   Bootstrap da aplicação. Importa e inicializa todos os módulos
-   na ordem correta de dependência.
+   BPMN Studio — js/main.js
+   Bootstrap. Importa e inicializa todos os módulos na ordem.
    ============================================================ */
 
-// ------------------------------------------------------------
-// Imports — ordem de dependência (de baixo para cima)
-// ------------------------------------------------------------
-import * as notifications from "./ui/notifications.js";
-import * as statusbar from "./ui/statusbar.js";
-import * as modeler from "./editor/modeler.js";
-import * as palette from "./editor/palette.js";
-import * as properties from "./editor/properties.js";
-import * as toolbar from "./ui/toolbar.js";
-import * as newDiagram from "./io/newDiagram.js";
-import * as exportBpmn from "./io/exportBpmn.js";
-import * as importBpmn from "./io/importBpmn.js";
-import * as validator from "./validation/validator.js";
+import * as modeler from "./modeler.js";
+import * as palette from "./palette.js";
+import * as properties from "./properties.js";
+import * as toolbar from "./toolbar.js";
+import * as notifications from "./notifications.js";
+import * as statusbar from "./statusbar.js";
+import * as validator from "./validator.js";
+import * as newDiagram from "./newDiagram.js";
+import * as exportBpmn from "./exportBpmn.js";
+import * as importBpmn from "./importBpmn.js";
 
 // ------------------------------------------------------------
-// Constantes de ambiente
+// Constantes
 // ------------------------------------------------------------
+
 const APP_NAME = "BPMN Studio";
 const APP_VERSION = "0.1.0";
-const LOG_PREFIX = "[BPMN Studio]";
+const LOG = "[BPMN Studio]";
 
 // ------------------------------------------------------------
-// Estado global da aplicação
+// Estado global
 // ------------------------------------------------------------
+
 const state = {
     booted: false,
-    modelerReady: false,
     currentFileName: null,
     hasUnsavedChanges: false,
 };
@@ -38,221 +35,165 @@ const state = {
 // ------------------------------------------------------------
 // Bootstrap
 // ------------------------------------------------------------
-function boot() {
-    console.info(`${LOG_PREFIX} v${APP_VERSION} — iniciando...`);
 
-    // 1) Verifica pré-requisito crítico: bpmn-js carregado via CDN?
+async function boot() {
+    console.info(`${LOG} v${APP_VERSION} — iniciando...`);
+
     if (typeof window.BpmnJS !== "function") {
         handleMissingBpmnJs();
         return;
     }
 
-    // 2) Trava erros globais ANTES de inicializar qualquer coisa
     installGlobalErrorHandlers();
 
-    // 3) Captura elementos-chave do DOM
-    const dom = captureDom();
-    if (!dom) return;
-
-    // 4) Inicializa subsistemas na ordem de dependência
-    initSubsystems(dom)
-        .then(() => {
-            state.booted = true;
-            state.modelerReady = true;
-
-            notifications.success(
-                `${APP_NAME} pronto`,
-                "Crie um processo arrastando elementos da barra lateral."
-            );
-
-            statusbar.setMessage(`v${APP_VERSION} — pronto para modelar`);
-            statusbar.setBadge("ok");
-
-            console.info(`${LOG_PREFIX} inicializado com sucesso.`);
-        })
-        .catch((err) => {
-            console.error(`${LOG_PREFIX} falha na inicialização:`, err);
-            notifications.danger(
-                "Falha ao iniciar",
-                err?.message || "Erro desconhecido. Veja o console."
-            );
-        })
-        .finally(() => {
-            // 5) Expõe para debug no console (independente de sucesso/erro)
-            exposeDebugApi(dom);
-        });
-}
-
-// ------------------------------------------------------------
-// Captura de elementos do DOM
-// ------------------------------------------------------------
-function captureDom() {
-    const dom = {
-        canvas: document.getElementById("canvas"),
-        toolbar: document.getElementById("toolbar"),
-        sidebar: document.getElementById("sidebar"),
-        properties: document.getElementById("properties"),
-        propertiesBody: document.getElementById("properties-body"),
-        statusbar: document.getElementById("statusbar"),
-        statusMessage: document.getElementById("status-message"),
-        zoomLevel: document.getElementById("zoom-level"),
-        bpmnBadge: document.getElementById("bpmn-badge"),
-        fileInput: document.getElementById("file-input"),
-        notifications: document.getElementById("notifications"),
-        validation: document.getElementById("validation"),
-        validationList: document.getElementById("validation-list"),
-    };
-
-    const required = ["canvas", "toolbar", "sidebar", "properties", "statusbar"];
-    const missing = required.filter((key) => !dom[key]);
-
-    if (missing.length > 0) {
-        const msg = `Elementos obrigatórios ausentes no DOM: ${missing.join(", ")}`;
-        console.error(`${LOG_PREFIX} ${msg}`);
-        alert(`${APP_NAME}: ${msg}`);
-        return null;
-    }
-
-    return dom;
-}
-
-// ------------------------------------------------------------
-// Inicialização dos subsistemas (ordem importa!)
-// ------------------------------------------------------------
-async function initSubsystems(dom) {
-    // 1. Notifications primeiro — todo o resto pode querer avisar o usuário
-    notifications.init(dom.notifications);
-
-    // 2. Statusbar — feedback contínuo
-    statusbar.init(dom);
-
-    // 3. Modeler — coração do app (instancia bpmn-js)
-    //    Passamos o statusbar para sincronizar zoom automaticamente.
-    modeler.init(dom.canvas, { statusbar });
-    const modelerInstance = modeler.getInstance();
-
-    if (!modelerInstance) {
-        throw new Error("Falha ao criar instância do bpmn-js.");
-    }
-
-    // 4. Palette (sidebar) — depende do modeler estar pronto
-    palette.init(modelerInstance);
-
-    // 5. Properties panel — depende do modeler
-    properties.init(modelerInstance);
-
-    // 6. IO — funções puras que recebem o modeler por parâmetro
-    const io = {
-        newDiagram: () => newDiagram.run(modelerInstance, { confirm: true }),
-        exportBpmn: (format) => exportBpmn.run(modelerInstance, format),
-        importBpmn: (file) => importBpmn.run(modelerInstance, file),
-    };
-
-    // 7. Toolbar — recebe tudo que precisa para orquestrar
-    toolbar.init({
-        dom,
-        modeler: modelerInstance,
-        io,
-        statusbar,
-        notifications,
-    });
-
-    // 8. Validator — stub na V1, mas já inicializado
-    validator.init(modelerInstance, {
-        listEl: dom.validationList,
-        panelEl: dom.validation,
-        notifications,
-    });
-
-    // 9. Carrega um diagrama inicial (vazio, com Start Event)
-    //    Envolvido com try/catch próprio para não abortar o boot se
-    //    houver um warning do bpmn-js.
     try {
-        await newDiagram.run(modelerInstance, { confirm: false });
-    } catch (err) {
-        console.warn(`${LOG_PREFIX} aviso ao criar diagrama inicial:`, err);
-    }
+        // 1. Notifications
+        notifications.init(document.getElementById("notifications"));
 
-    // 10. Marca alterações não salvas a cada mudança no modeler
-    modelerInstance.on("commandStack.changed", () => {
-        state.hasUnsavedChanges = true;
-        statusbar.setMessage("Alterações não salvas");
-    });
+        // 2. Statusbar
+        statusbar.init({});
+
+        // 3. Modeler
+        modeler.init({
+            container: "#canvas",
+            statusbar,
+            notifications,
+        });
+
+        const instance = modeler.getInstance();
+        if (!instance) throw new Error("Falha ao criar instância do bpmn-js.");
+
+        // 4. Palette
+        palette.init(instance, { container: document.getElementById("palette-container") });
+
+        // 5. Properties
+        properties.init(instance, {
+            bodyEl: document.getElementById("properties-body"),
+            titleEl: document.getElementById("properties-title"),
+        });
+
+        // 6. Validator (ANTES do toolbar)
+        validator.init(instance, {
+            listEl: document.getElementById("validation-list"),
+            panelEl: document.getElementById("validation"),
+            summaryEl: document.getElementById("validation-summary"),
+            notifications,
+        });
+
+        // 7. Toolbar (precisa do validator já inicializado)
+        const io = {
+            newDiagram: () => newDiagram.run(instance, { confirm: true }),
+            exportBpmn: (format) => exportBpmn.run(instance, format),
+            importBpmn: (file) => importBpmn.run(instance, file),
+        };
+
+        toolbar.init({
+            modeler,
+            instance,
+            io,
+            statusbar,
+            notifications,
+            validator,
+        });
+
+        // 8. Diagrama inicial
+        try {
+            await newDiagram.run(instance, { confirm: false });
+        } catch (err) {
+            console.warn(`${LOG} aviso ao criar diagrama inicial:`, err);
+        }
+
+        // 9. Estado "dirty"
+        instance.on("commandStack.changed", () => {
+            state.hasUnsavedChanges = true;
+            statusbar.setMessage("Alterações não salvas", { level: "warning" });
+        });
+
+        // 10. Contagem de elementos inicial
+        updateElementCount();
+
+        state.booted = true;
+
+        notifications.success(
+            `${APP_NAME} pronto`,
+            "Crie um processo arrastando elementos da barra lateral."
+        );
+
+        statusbar.setMessage(`v${APP_VERSION} — pronto`, { level: "success" });
+
+        console.info(`${LOG} inicializado com sucesso.`);
+    } catch (err) {
+        console.error(`${LOG} falha na inicialização:`, err);
+
+        notifications.danger(
+            "Falha ao iniciar",
+            err?.message || "Erro desconhecido."
+        );
+    } finally {
+        exposeDebugApi();
+    }
 }
 
 // ------------------------------------------------------------
-// Tratamento de CDN indisponível
+// Utilitários internos
 // ------------------------------------------------------------
+
+function updateElementCount() {
+    try {
+        const count = modeler.getElementCount();
+        statusbar.setElementCount(count);
+    } catch {
+        // silencioso
+    }
+}
+
 function handleMissingBpmnJs() {
-    const msg =
-        "A biblioteca bpmn-js não foi carregada. " +
-        "Verifique sua conexão com a internet ou se o CDN (unpkg) está acessível.";
+    console.error(`${LOG} bpmn-js não carregado (CDN indisponível).`);
 
-    console.error(`${LOG_PREFIX} ${msg}`);
-
-    const banner = document.createElement("div");
-    banner.style.cssText = `
-        position: fixed; inset: 0; z-index: 99999;
-        display: flex; align-items: center; justify-content: center;
-        background: #f8fafc; color: #0f172a;
-        font-family: system-ui, sans-serif; padding: 24px; text-align: center;
-    `;
-    banner.innerHTML = `
-        <div style="max-width: 480px;">
-            <h1 style="margin: 0 0 12px; font-size: 20px;">${APP_NAME}</h1>
-            <p style="margin: 0 0 16px; line-height: 1.6; color: #475569;">
-                Não foi possível carregar o motor de modelagem BPMN.
-            </p>
-            <p style="margin: 0 0 24px; line-height: 1.6; color: #475569;">
-                ${msg}
-            </p>
-            <button onclick="location.reload()"
-                style="padding: 10px 20px; background: #3b5bdb; color: white;
-                       border: none; border-radius: 6px; cursor: pointer;
-                       font-size: 14px; font-weight: 500;">
-                Tentar novamente
-            </button>
+    document.body.innerHTML = `
+        <div style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:32px;background:#f8fafc;color:#0f172a;font-family:system-ui,sans-serif;text-align:center;">
+            <div style="max-width:480px;">
+                <h1 style="margin:0 0 12px;font-size:20px;">${APP_NAME}</h1>
+                <p style="color:#475569;line-height:1.6;">
+                    Não foi possível carregar o motor de modelagem BPMN.
+                    Verifique sua conexão com a internet.
+                </p>
+                <button onclick="location.reload()"
+                    style="margin-top:16px;padding:10px 20px;background:#2563eb;color:#fff;border:0;border-radius:6px;cursor:pointer;font-size:14px;font-weight:500;">
+                    Tentar novamente
+                </button>
+            </div>
         </div>
     `;
-    document.body.appendChild(banner);
 }
 
-// ------------------------------------------------------------
-// Handlers globais de erro
-// ------------------------------------------------------------
 function installGlobalErrorHandlers() {
-    // Palavras-chave que indicam erro de extensão de navegador
-    // (MetaMask, etc.) — não são do nosso app, então filtramos.
-    const EXTENSION_NOISE = [
+    const NOISE = [
         "Could not establish connection",
         "Receiving end does not exist",
         "MetaMask",
-        "extension",
         "contentscript",
     ];
 
-    function isExtensionNoise(value) {
+    function isNoise(value) {
         if (!value) return false;
         const str =
             typeof value === "string"
                 ? value
                 : value?.message || value?.reason?.message || "";
-        return EXTENSION_NOISE.some((kw) =>
-            str.toLowerCase().includes(kw.toLowerCase())
-        );
+        return NOISE.some((k) => str.toLowerCase().includes(k.toLowerCase()));
     }
 
     window.addEventListener("error", (event) => {
-        if (isExtensionNoise(event.error || event.message)) return;
-        console.error(`${LOG_PREFIX} erro não capturado:`, event.error || event.message);
+        if (isNoise(event.error || event.message)) return;
+        console.error(`${LOG} erro:`, event.error || event.message);
     });
 
     window.addEventListener("unhandledrejection", (event) => {
-        if (isExtensionNoise(event.reason)) return;
-        console.error(`${LOG_PREFIX} promise rejeitada sem tratamento:`, event.reason);
+        if (isNoise(event.reason)) return;
+        console.error(`${LOG} promise rejeitada:`, event.reason);
     });
 
-    // Aviso ao sair com alterações não salvas
     window.addEventListener("beforeunload", (event) => {
         if (state.hasUnsavedChanges) {
             event.preventDefault();
@@ -261,16 +202,13 @@ function installGlobalErrorHandlers() {
     });
 }
 
-// ------------------------------------------------------------
-// API de debug exposta em window.BPMNStudio
-// ------------------------------------------------------------
-function exposeDebugApi(dom) {
+function exposeDebugApi() {
+    const instance = modeler.getInstance();
+
     window.BPMNStudio = {
         version: APP_VERSION,
         state,
-        dom,
-        modeler: modeler.getInstance(),
-        // Módulos completos (para debug e para o toolbar chamar)
+        modeler: instance,
         notifications,
         statusbar,
         validator,
@@ -280,27 +218,27 @@ function exposeDebugApi(dom) {
         newDiagram,
         exportBpmn,
         importBpmn,
-        // Helpers úteis no console:
+
         async exportXml() {
-            return exportBpmn.toXml(modeler.getInstance());
+            return exportBpmn.toXml(instance);
         },
+
         async importXml(xml) {
-            return importBpmn.fromString(modeler.getInstance(), xml);
+            return importBpmn.fromString(instance, xml);
         },
+
         resetDirty() {
             state.hasUnsavedChanges = false;
-            statusbar.setMessage("");
         },
     };
 
-    console.info(
-        `${LOG_PREFIX} API de debug disponível em window.BPMNStudio`
-    );
+    console.info(`${LOG} API de debug em window.BPMNStudio`);
 }
 
 // ------------------------------------------------------------
 // Ponto de entrada
 // ------------------------------------------------------------
+
 if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", boot);
 } else {

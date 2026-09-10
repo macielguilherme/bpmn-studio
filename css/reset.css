@@ -1,12 +1,10 @@
 /* ============================================================
    BPMN Studio — reset.css
-   Normalização moderna de estilos padrão do navegador.
-   Carregado ANTES de variables/layout/components/style.
+   Normalização cross-browser. NÃO colocar estilos de componentes.
    ============================================================ */
 
 /* ------------------------------------------------------------
-   1. BOX MODEL GLOBAL
-   Todos os elementos usam border-box por padrão.
+   BOX MODEL
    ------------------------------------------------------------ */
 *,
 *::before,
@@ -15,7 +13,7 @@
 }
 
 /* ------------------------------------------------------------
-   2. HTML E BODY
+   DOCUMENTO
    ------------------------------------------------------------ */
 html {
     -webkit-text-size-adjust: 100%;
@@ -25,17 +23,17 @@ html {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     tab-size: 4;
+    scroll-behavior: smooth;
 }
 
 body {
     margin: 0;
     padding: 0;
     min-height: 100vh;
-    line-height: 1.5;
 }
 
 /* ------------------------------------------------------------
-   3. TIPOGRAFIA
+   TIPOGRAFIA
    ------------------------------------------------------------ */
 h1,
 h2,
@@ -54,21 +52,17 @@ p {
 }
 
 /* ------------------------------------------------------------
-   4. LISTAS
-   Remove marcadores e recuo apenas em listas com role semântica
-   de UI (nav, menus). Listas de conteúdo mantêm seus marcadores.
+   LISTAS
    ------------------------------------------------------------ */
-ul[role="list"],
-ol[role="list"],
-nav ul,
-nav ol {
-    list-style: none;
-    padding: 0;
+ul,
+ol {
     margin: 0;
+    padding: 0;
+    list-style: none;
 }
 
 /* ------------------------------------------------------------
-   5. LINKS
+   LINKS
    ------------------------------------------------------------ */
 a {
     color: inherit;
@@ -80,14 +74,12 @@ a:hover {
 }
 
 /* ------------------------------------------------------------
-   6. MÍDIA
-   Imagens e mídia não estouram seus containers.
+   MÍDIA
    ------------------------------------------------------------ */
 img,
 picture,
 video,
-canvas,
-svg {
+canvas {
     display: block;
     max-width: 100%;
 }
@@ -98,23 +90,32 @@ video {
     height: auto;
 }
 
+svg {
+    display: block;
+}
+
+img,
+picture,
+video {
+    height: auto;
+}
+
 /* ------------------------------------------------------------
-   7. FORMULÁRIOS
-   Inputs, botões e selects herdam tipografia do app.
+   FORMULÁRIOS
    ------------------------------------------------------------ */
-input,
 button,
+input,
 textarea,
 select {
+    margin: 0;
     font: inherit;
     color: inherit;
-    margin: 0;
 }
 
 button {
-    background: none;
-    border: none;
+    border: 0;
     padding: 0;
+    background: none;
     cursor: pointer;
     text-align: inherit;
     -webkit-appearance: none;
@@ -125,14 +126,20 @@ button:disabled {
     cursor: not-allowed;
 }
 
+input,
+textarea,
+select {
+    border-radius: 0;
+}
+
 textarea {
     resize: vertical;
 }
 
 fieldset {
-    border: none;
-    padding: 0;
     margin: 0;
+    padding: 0;
+    border: 0;
 }
 
 legend {
@@ -140,7 +147,7 @@ legend {
 }
 
 /* ------------------------------------------------------------
-   8. TABELAS
+   TABELAS
    ------------------------------------------------------------ */
 table {
     border-collapse: collapse;
@@ -148,17 +155,19 @@ table {
 }
 
 /* ------------------------------------------------------------
-   9. ELEMENTOS INTERATIVOS
+   INTERATIVOS
    ------------------------------------------------------------ */
 summary {
     cursor: pointer;
 }
 
 /* ------------------------------------------------------------
-   10. ACESSIBILIDADE — PREFERÊNCIAS DO USUÁRIO
+   ACESSIBILIDADE
    ------------------------------------------------------------ */
+:focus {
+    outline: none;
+}
 
-/* Usuário pediu movimento reduzido: desliga animações e transições */
 @media (prefers-reduced-motion: reduce) {
 
     *,
@@ -172,8 +181,7 @@ summary {
 }
 
 /* ------------------------------------------------------------
-   11. UTILITÁRIO — ESCONDE VISUALMENTE MAS MANTÉM PARA LEITOR DE TELA
-   (complementa .sr-only em components.css; aqui é o fallback global)
+   UTILITÁRIOS
    ------------------------------------------------------------ */
 [hidden] {
     display: none !important;
