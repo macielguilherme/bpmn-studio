@@ -33,7 +33,9 @@ export function init(dom = {}) {
         dom.statusMessage || document.getElementById("status-message");
 
     state.zoomEl =
-        dom.zoomLevel || document.getElementById("zoom-level");
+    dom.zoomLevel ||
+    document.getElementById("zoom-level-status") ||
+    document.getElementById("zoom-level");
 
     state.countEl =
         dom.elementCount || document.getElementById("element-count");
@@ -85,8 +87,18 @@ export function clearMessage() {
 }
 
 export function setZoom(value) {
-    if (!state.zoomEl) return;
-    state.zoomEl.textContent = `${formatZoom(value)}%`;
+    const percent = formatZoom(value);
+
+    const topZoom = document.getElementById("zoom-level-status");
+    const bottomZoom = document.getElementById("zoom-level");
+
+    if (topZoom) {
+        topZoom.textContent = `${percent}%`;
+    }
+
+    if (bottomZoom) {
+        bottomZoom.textContent = `${percent}%`;
+    }
 }
 
 export function setElementCount(count) {
